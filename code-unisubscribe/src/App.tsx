@@ -11,7 +11,7 @@ function App() {
     <div className="App">
       <Router>
         <Switch>
-          <PrivateRoute exact path="/" component={PersistentDrawerLeft} />
+          <Route exact path="/" component={PersistentDrawerLeft} />
           <Route path="/login" component={SignIn} />
           <Route path="/registiration" component={SignUp} />
         </Switch>
