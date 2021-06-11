@@ -13,13 +13,10 @@
     "@types/react": "^17.0.11",
     "@types/react-dom": "^17.0.7",
     "axios": "^0.21.1",
-<<<<<<< HEAD
     "clsx": "^1.1.1",
-=======
     "bootstrap": "^5.0.1",
     "formik": "^2.2.9",
     "node-sass": "^6.0.0",
->>>>>>> b25aba373c9ad072a8c37a02c0a97320c9d45be4
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.4",
