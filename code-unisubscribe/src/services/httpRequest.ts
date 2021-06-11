@@ -12,8 +12,18 @@ export class HttpClient {
     return await axios.get(`${this.baseUrl}/${url}`);
   }
 
-  async post(url: string, data: ISubscription[]) {
+  async post(url: string, data: any) {
     return await axios.post(`${this.baseUrl}/${url}`, {
+      subscription: data,
+    });
+  }
+
+  async delete(url: string) {
+    return await axios.put(`${this.baseUrl}/${url}`);
+  }
+
+  async edit(url: string, data: any) {
+    return await axios.put(`${this.baseUrl}/${url}`, {
       subscription: data,
     });
   }
