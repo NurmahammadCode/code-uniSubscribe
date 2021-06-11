@@ -1,8 +1,5 @@
-
-
 import React from 'react';
 import clsx from 'clsx';
-
 import { makeStyles, useTheme, Theme, createStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -32,6 +29,12 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 const drawerWidth = 240;
 
@@ -41,7 +44,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
     },
     table: {
-      width: 1024,
+      width: 900,
     },
     appBar: {
       transition: theme.transitions.create(['margin', 'width'], {
@@ -114,6 +117,8 @@ export default function PersistentDrawerLeft() {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const [show, setShow] = React.useState(false);
+
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -121,6 +126,14 @@ export default function PersistentDrawerLeft() {
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+
+  const handleClickOpen = () => {
+    setShow(true);
+  };
+
+  const handleClose = () => {
+    setShow(false);
   };
 
   return (
@@ -145,7 +158,54 @@ export default function PersistentDrawerLeft() {
           <Typography variant="h6" >
             News
           </Typography>
-          <Button variant="contained" color="secondary" style={{marginLeft:"auto"}}>Add New Subscription</Button>
+          <Button variant="contained" color="secondary" style={{ marginLeft: "auto" }} onClick={handleClickOpen}>Add New Subscription</Button>
+          <Dialog open={show} onClose={handleClose} aria-labelledby="form-dialog-title">
+            <DialogTitle id="form-dialog-title">Add Subscription</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+
+                To subscribe, please enter information correctly
+              </DialogContentText>
+              <TextField
+                autoFocus
+                margin="dense"
+                id="companyname"
+                label="Company Name"
+                type="text"
+                fullWidth
+              />
+              <TextField
+
+                margin="dense"
+                id="price"
+                label="Subscription Price"
+                type="text"
+                fullWidth
+              />
+              <TextField
+                id="link"
+                label="Link"
+                type="text"
+                fullWidth
+               style={{marginBottom:'1rem'}}/>
+              <label htmlFor="expirationDate" style={{fontSize:"1rem"}}> Expirition Date </label> 
+              <TextField
+
+                margin="dense"
+                id="date"
+                type="date"
+                fullWidth
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose} color="primary">
+                Cancel
+              </Button>
+              <Button onClick={handleClose} color="primary">
+                Add
+              </Button>
+            </DialogActions>
+          </Dialog>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -164,12 +224,44 @@ export default function PersistentDrawerLeft() {
         </div>
         <Divider />
         <List>
-          {['Category', 'Trash'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>{index % 2 !== 0 ? <DeleteIcon /> : <ListIcon />}</ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
+          {['Category'].map((text, index) => (
+            <>
+              <ListItem button key={text}>
+                <ListItemIcon>{index % 2 !== 0 ? <DeleteIcon /> : <ListIcon />}</ListItemIcon>
+
+
+                <ListItemText primary={text} />
+              </ListItem>
+              <ListItem button >
+                <ListItemText primary={'Game'} />
+              </ListItem>
+              <ListItem button >
+                <ListItemText primary={'Sport '} />
+              </ListItem>
+              <ListItem button >
+                <ListItemText primary={'Movie'} />
+              </ListItem>
+            </>
           ))}
+          {['Trash'].map((text, index) => (
+            <>
+              <ListItem button key={text}>
+                <ListItemIcon>{index % 2 !== 0 ? <ListIcon /> : <DeleteIcon />}</ListItemIcon>
+
+
+
+
+
+
+                <ListItemText primary={text} />
+              </ListItem>
+
+            </>
+          ))}
+
+
+
+
         </List>
 
       </Drawer>
@@ -179,13 +271,13 @@ export default function PersistentDrawerLeft() {
         })}
       >
         <div className={classes.drawerHeader} />
-        <TableContainer component={Paper} style={{boxShadow:"1px"}}>
-          <Table className={classes.table} aria-label="simple table" style={{margin:"0 auto"}}>
+        <TableContainer component={Paper} style={{ boxShadow: "1px" }}>
+          <Table className={classes.table} aria-label="simple table" style={{ margin: "0 auto" }}>
             <TableHead>
               <TableRow>
-                <TableCell>Company Name</TableCell>
-                <TableCell align="right">Price</TableCell>
-                <TableCell align="right">Expiration Date</TableCell>
+                <TableCell style={{fontWeight:"bold"}}>Company Name</TableCell>
+                <TableCell style={{fontWeight:"bold"}} align="right">Price</TableCell>
+                <TableCell style={{fontWeight:"bold"}} align="right">Expiration Date</TableCell>
                 <TableCell align="right"></TableCell>
                 <TableCell align="right"></TableCell>
               </TableRow>
@@ -198,12 +290,12 @@ export default function PersistentDrawerLeft() {
                   </TableCell>
                   <TableCell align="right">{row.calories}</TableCell>
                   <TableCell align="right">{row.fat}</TableCell>
-                  <TableCell align="right"><Button variant="contained" color="secondary">
-                    Secondary
+                  <TableCell align="right" style={{padding:"1rem 0"}}><Button variant="contained" color="secondary">
+                    Edit
                   </Button></TableCell>
-                  <TableCell align="right"><Button variant="contained" color="primary">
-  Secondary
-</Button></TableCell>
+                  <TableCell align="right" style={{padding:"1rem 0 "}}><Button variant="contained" color="primary">
+                    Delete
+                  </Button></TableCell>
                 </TableRow>
               ))}
             </TableBody>
