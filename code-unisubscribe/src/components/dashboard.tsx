@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 import clsx from 'clsx';
 import { withStyles, makeStyles, useTheme, Theme, createStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -40,6 +40,8 @@ import "./style.scss"
 
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
+import { getSubscriptions } from '../store/actions';
+import { useDispatch, useSelector } from 'react-redux';
 
 const drawerWidth = 240;
 
@@ -144,6 +146,8 @@ const StyledTableRow = withStyles((theme: Theme) =>
 
 
 export default function PersistentDrawerLeft() {
+  const state = useSelector(state => state)
+  console.log(state)
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -161,6 +165,12 @@ export default function PersistentDrawerLeft() {
   const handleClose = () => {
     setShow(false);
   };
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    getSubscriptions(1)(dispatch)
+  }, [])
   return (
     <div className={classes.root}>
       <CssBaseline />
