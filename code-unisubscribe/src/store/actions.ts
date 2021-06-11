@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Dispatch } from "redux";
 import { IDeleteSub, ISubArr, ISubscription } from "../models/types";
+import { HttpClient } from "../services/httpRequest";
 import { ADD_SUB, ADD_SUBS } from "./constants";
 // import { ADD_SUBSCRIPTIONS } from "./constants";
 
@@ -9,22 +10,11 @@ interface IActionAddSubscriptions {
   payload: ISubscription[];
 }
 
-export const addSubscriptions =
-  (payload: ISubscription[]) => (dispatch: Dispatch) => {
-    axios
-      .get("http://localhost:5000/cards")
-      .then((response) =>
-        dispatch({
-          type: ADD_SUBS,
-          payload: response,
-        })
-      )
-      .catch((err) => console.error(err));
-  };
+const request = new HttpClient("http://172.28.0.48:8080/api/clients");
 
-export const addSub = (payload: ISubscription) => (dispatch: Dispatch) => {
-  axios
-    .post("http://localhost:5000/delete", payload)
+export const getSubscriptions = (id: Number) => (dispatch: Dispatch) => {
+  request
+    .get(`${id}/companies`)
     .then((response) =>
       dispatch({
         type: ADD_SUBS,
@@ -33,6 +23,18 @@ export const addSub = (payload: ISubscription) => (dispatch: Dispatch) => {
     )
     .catch((err) => console.error(err));
 };
+
+// export const addSub = (payload: ISubscription,id:number) => (dispatch: Dispatch) => {
+//   request
+//     .post(`${id}/companies`, payload)
+//     .then((response) =>
+//       dispatch({
+//         type: ADD_SUBS,
+//         payload: response,
+//       })
+//     )
+//     .catch((err) => console.error(err));
+// };
 
 export const deleteSub = (payload: IDeleteSub) => (dispatch: Dispatch) => {
   axios
