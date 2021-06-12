@@ -25,11 +25,11 @@ interface IActionGetFilteredSubs {
 //   payload:
 // }
 
-const request = new HttpClient("http://172.28.0.33:8181/api/clients");
+const request = new HttpClient("http://172.28.0.33:8080/api/clients");
 
 export const getSubscriptions = (id: Number) => (dispatch: Dispatch) => {
   request
-    .get(`${id}/subscriptions`)
+    .get(`subscriptions`)
     .then((response) =>
       dispatch({
         type: ADD_SUBS,
@@ -44,21 +44,21 @@ export const getFilteredSubs =
   (dispatch: Dispatch) => {
     request
       .get(
-        `${id}/subscriptions?pageNumber=${pageNumber}&countOfData=${numberOfCount}`
+        `subscriptions?pageNumber=${pageNumber}&countOfData=${numberOfCount}`
       )
-      .then((response) =>
-      {console.log("nurmehemmed",response.data.dataInPage); dispatch({
+      .then((response) => {
+        console.log("nurmehemmed", response.data.dataInPage);
+        dispatch({
           type: ADD_FILTERED_SUBS,
           payload: response.data.dataInPage,
-        })}
-        
-      )
+        });
+      })
       .catch((err) => console.error(err));
   };
 
 export const addSub = (payload: any, id: Number) => (dispatch: Dispatch) => {
   request
-    .post(`${id}/subscription`, payload)
+    .post(`subscription`, payload)
     .then((response) => {
       dispatch({
         type: ADD_SUBS,
@@ -70,8 +70,8 @@ export const addSub = (payload: any, id: Number) => (dispatch: Dispatch) => {
 
 export const deleteSub =
   (userId: Number, subId: Number) => (dispatch: Dispatch) => {
-     request
-      .delete(`${userId}/subscriptions/delete/${subId}`)
+    request
+      .delete(`subscriptions/delete/${subId}`)
       .then((response) =>
         dispatch({
           type: ADD_SUBS,
@@ -84,7 +84,7 @@ export const deleteSub =
 export const editSub =
   (payload: any, userId: Number, subId: Number) => (dispatch: Dispatch) => {
     request
-      .edit(`${userId}/subscriptions/update/${subId}`, payload)
+      .edit(`subscriptions/update/${subId}`, payload)
       .then((response) => {
         console.log("edited data", response.data);
         dispatch({

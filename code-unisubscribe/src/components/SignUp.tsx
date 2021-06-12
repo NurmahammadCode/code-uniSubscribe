@@ -57,21 +57,26 @@ export default function SignUp() {
 
   const [firstName, setFirstName] = useState<String>("");
   const [lastName, setLastName] = useState<String>("");
-  const [userName, setUserName] = useState<String>("");
+  const [email, setEmail] = useState<String>("");
+  const [phoneNumber, setPhoneNumber] = useState<String>("");
   const [password, setPassword] = useState<String>("");
-  const [file, setFile] = useState<String>();
 
   const handleRegister = (e: any) => {
     e.preventDefault();
-    axios
-      .post("http://localhost:8181/user/registiration", {
-        UserName: userName,
-        Password: password,
-      })
-      .then((response) => {
-        history.push("/login");
-      })
-      .catch((error) => console.error(error));
+    if (firstName && lastName && email && phoneNumber && password)
+      axios
+        .post("http://172.28.0.33:8080/api/register", {
+          name: firstName,
+          surname: lastName,
+          email: email,
+          phoneNumber: phoneNumber,
+          password: password,
+        })
+        .then((response) => {
+          console.log(response.data);
+          // history.push("/login");
+        })
+        .catch((error) => console.error(error));
   };
   return (
     <Container component="main" maxWidth="xs">
@@ -99,6 +104,8 @@ export default function SignUp() {
                 id="firstName"
                 label="First Name"
                 autoFocus
+                onChange={(e) => setFirstName(e.target.value)}
+                value={firstName}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -110,12 +117,14 @@ export default function SignUp() {
                 label="Last Name"
                 name="lastName"
                 autoComplete="lname"
+                onChange={(e) => setLastName(e.target.value)}
+                value={lastName}
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
-                onChange={(e) => setUserName(e.target.value)}
-                value={userName}
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
                 variant="outlined"
                 required
                 fullWidth
@@ -123,6 +132,20 @@ export default function SignUp() {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                value={phoneNumber}
+                variant="outlined"
+                required
+                fullWidth
+                name="phoneNumber"
+                label="Phone"
+                type="phone"
+                id="phone"
+                autoComplete="current-phone"
               />
             </Grid>
             <Grid item xs={12}>
@@ -138,16 +161,6 @@ export default function SignUp() {
                 id="password"
                 autoComplete="current-password"
               />
-            </Grid>
-            <Grid
-              style={{ display: "flex", justifyContent: "center" }}
-              item
-              xs={12}
-            >
-              <Button variant="contained" component="label">
-                Upload your image
-                <input type="file" hidden />
-              </Button>
             </Grid>
           </Grid>
           <Button
