@@ -47,10 +47,11 @@ export const getFilteredSubs =
         `${id}/subscriptions?pageNumber=${pageNumber}&countOfData=${numberOfCount}`
       )
       .then((response) =>
-        dispatch({
+      {console.log("nurmehemmed",response.data.dataInPage); dispatch({
           type: ADD_FILTERED_SUBS,
           payload: response.data.dataInPage,
-        })
+        })}
+        
       )
       .catch((err) => console.error(err));
   };
@@ -70,8 +71,8 @@ export const addSub = (payload: any, id: Number) => (dispatch: Dispatch) => {
 
 export const deleteSub =
   (userId: Number, subId: Number) => (dispatch: Dispatch) => {
-    request
-      .delete(`${userId}/subscriptions/${subId}`)
+     request
+      .delete(`${userId}/subscriptions/delete/${subId}`)
       .then((response) =>
         dispatch({
           type: ADD_SUBS,

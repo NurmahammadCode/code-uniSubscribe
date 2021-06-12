@@ -1,6 +1,6 @@
 import { ISubArr } from "../models/types";
 import { Actions } from "./actions";
-import { ADD_FILTERED_SUBS, ADD_SUB, ADD_SUBS } from "./constants";
+import { ADD_FILTERED_SUBS, ADD_SUB, ADD_SUBS, DELETE_SUB } from "./constants";
 
 const initialState: ISubArr = {
   subscriptions: [],
@@ -18,6 +18,9 @@ export default function subscriptionReducer(
     case ADD_FILTERED_SUBS: {
       return { ...state, filteredSubscriptions: action.payload };
     }
+ 
+    
+   
     default:
       return state;
   }

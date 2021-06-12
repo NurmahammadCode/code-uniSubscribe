@@ -16,6 +16,7 @@ import { Link as RouterLink, useHistory } from "react-router-dom";
 import axios from "axios";
 import { Modal } from "@material-ui/core";
 
+
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -59,10 +60,13 @@ export default function SignIn() {
   const [userName, setUserName] = useState<String>("");
   const [password, setPassword] = useState<String>("");
 
+
+
   const [isShowModal, setIsShowModal] = useState<any>(false);
   const [body, setBody] = useState<any>("Your username or password is false");
 
   const handleLogin = (e: any) => {
+
     e.preventDefault();
     axios
       .post("http://localhost:8080/user/login", {
@@ -70,13 +74,9 @@ export default function SignIn() {
         Password: password,
       })
       .then((response) => {
-        if (response.data === "success") {
-          localStorage.setItem("isAuth", "true");
-          history.push("/");
-        } else {
-          setIsShowModal(true);
-        }
+        console.log(response)
       });
+
   };
 
   return (
