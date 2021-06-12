@@ -36,10 +36,15 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
+import Pagination from '@material-ui/lab/Pagination';
+
+
 import "./style.scss"
 
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
+
+
 
 const drawerWidth = 240;
 
@@ -47,6 +52,9 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       display: 'flex',
+      '& > *': {
+        marginTop: theme.spacing(2),
+      },
     },
     table: {
       width: 1000,
@@ -161,6 +169,8 @@ export default function PersistentDrawerLeft() {
   const handleClose = () => {
     setShow(false);
   };
+
+  
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -318,7 +328,12 @@ export default function PersistentDrawerLeft() {
             </TableBody>
           </Table>
         </TableContainer>
+        <div className={classes.root}>
+  
+  <Pagination count={10} style={{margin:"3rem auto 0 auto"}} color="secondary" />
+</div>
       </main>
+    
     </div>
   );
 }
