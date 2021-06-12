@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
-import { makeStyles, useTheme, Theme, createStyles } from '@material-ui/core/styles';
+import { withStyles, makeStyles, useTheme, Theme, createStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBar from '@material-ui/core/AppBar';
@@ -29,12 +29,17 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 
-import TextField from '@material-ui/core/TextField';
+//import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+
+import "./style.scss"
+
+import { Formik, Form, Field } from 'formik';
+import * as Yup from 'yup';
 
 const drawerWidth = 240;
 
@@ -44,7 +49,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
     },
     table: {
-      width: 900,
+      width: 1000,
     },
     appBar: {
       transition: theme.transitions.create(['margin', 'width'], {
@@ -77,7 +82,6 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       alignItems: 'center',
       padding: theme.spacing(0, 1),
-      // necessary for content to be below app bar
       ...theme.mixins.toolbar,
       justifyContent: 'flex-end',
     },
@@ -100,17 +104,43 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-function createData(name: string, calories: number, fat: number, carbs: number, protein: number) {
-  return { name, calories, fat, carbs, protein };
+function createData(companyname: string, price: number, edate: string) {
+  return { companyname, price, edate };
 }
-
 const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
+  createData('Frozen yoghurt', 159, "15.05.2021"),
+  createData('Ice cream sandwich', 237, "10.04.2021"),
+  createData('Eclair', 262, "28.03.2021"),
+  createData('Cupcake', 305, "19.06.2021"),
+  createData('Gingerbread', 356, "18.04.2021"),
+  createData('Gingerbread', 356, "15.04.2021"),
+  createData('Gingerbread', 356, "27.05.2021"),
+  createData('Gingerbread', 356, "18.04.2021"),
 ];
+
+const SignupSchema = Yup.object().shape({
+  companyname: Yup.string()
+    .min(2, 'Too Short!')
+    .max(30, 'Too Long!')
+    .required('Company Name is a required field!'),
+  price: Yup.string().matches(/^[+-]?\d*(?:[.,]\d*)?$/, 'Should be a number').required("Price is a required field!"),
+  link: Yup.string().matches(/((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/, 'Enter correct url!'
+  ).required('Link is a required field!').min(10, 'Too Short!')
+    .max(50, 'Too Long!'),
+  date: Yup.date()
+    .min(new Date().toLocaleDateString())
+    .required("Date is a required field!"),
+});
+
+const StyledTableRow = withStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      '&:nth-of-type(odd)': {
+        backgroundColor: theme.palette.action.hover,
+      },
+    },
+  }),
+)(TableRow);
 
 
 export default function PersistentDrawerLeft() {
@@ -119,23 +149,18 @@ export default function PersistentDrawerLeft() {
   const [open, setOpen] = React.useState(false);
   const [show, setShow] = React.useState(false);
 
-
   const handleDrawerOpen = () => {
     setOpen(true);
   };
-
   const handleDrawerClose = () => {
     setOpen(false);
   };
-
   const handleClickOpen = () => {
     setShow(true);
   };
-
   const handleClose = () => {
     setShow(false);
   };
-
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -143,65 +168,70 @@ export default function PersistentDrawerLeft() {
         position="fixed"
         className={clsx(classes.appBar, {
           [classes.appBarShift]: open,
-        })}
-      >
+        })}>
         <Toolbar>
           <IconButton
             color="inherit"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
             edge="start"
-            className={clsx(classes.menuButton, open && classes.hide)}
-          >
-            <MenuIcon />
+            className={clsx(classes.menuButton, open && classes.hide)}>
+          <MenuIcon />
           </IconButton>
           <Typography variant="h6" >
-            News
+             SUBSCRIPTION LIST
           </Typography>
-          <Button variant="contained" color="secondary" style={{ marginLeft: "auto" }} onClick={handleClickOpen}>Add New Subscription</Button>
-          <Dialog open={show} onClose={handleClose} aria-labelledby="form-dialog-title">
-            <DialogTitle id="form-dialog-title">Add Subscription</DialogTitle>
+          <Button variant="contained" onClick={handleClickOpen} style={{ fontWeight: "bold", marginLeft: "auto" }} color="secondary">
+            Add New Subscription
+          </Button><Dialog open={show} onClose={handleClose} aria-labelledby="form-dialog-title">
+            <DialogTitle id="form-dialog-title" style={{color:"#f50057",fontWeight:"bolder"}}>Add Subscription</DialogTitle>
             <DialogContent>
-              <DialogContentText>
+            <DialogContentText>
+            To subscribe, please enter all datas correctly
+             </DialogContentText>
+              <Formik
+                initialValues={{
+                  companyname: '',
+                  price: '',
+                  link: '',
+                  date: ''
+                }}
+                validationSchema={SignupSchema}
+                onSubmit={values => {
+                  console.log(values);
+                }}>
+                {({ errors, touched }) => (
+                  <Form>
+                    <label htmlFor="companyName" style={{ color: "#3f51b5", fontWeight: "bold" }} >Company Name</label>
+                    <Field name="companyname" className="form-control" />
+                    {errors.companyname && touched.companyname ? (
+                      <div style={{ color: "#f50057", fontWeight: "bold" }}>{errors.companyname}</div>
+                    ) : null}
+                    <label htmlFor="price" style={{ color: "#3f51b5", fontWeight: "bold" }}>Price</label>
 
-                To subscribe, please enter information correctly
-              </DialogContentText>
-              <TextField
-                autoFocus
-                margin="dense"
-                id="companyname"
-                label="Company Name"
-                type="text"
-                fullWidth
-              />
-              <TextField
+                    <Field name="price" className="form-control" />
+                    {errors.price && touched.price ? (
+                      <div style={{ color: "#f50057", fontWeight: "bold" }}>{errors.price}</div>
+                    ) : null}
+                    <label htmlFor="link" style={{ color: "#3f51b5", fontWeight: "bold" }}>Link</label>
 
-                margin="dense"
-                id="price"
-                label="Subscription Price"
-                type="text"
-                fullWidth
-              />
-              <TextField
-                id="link"
-                label="Link"
-                type="text"
-                fullWidth
-               style={{marginBottom:'1rem'}}/>
-              <label htmlFor="expirationDate" style={{fontSize:"1rem"}}> Expirition Date </label> 
-              <TextField
+                    <Field name="link" type="text" className="form-control" />
+                    {errors.link && touched.link ? <div style={{ color: "#f50057", fontWeight: "bold" }}>{errors.link}</div> : null}
+                    <label htmlFor="expiritionDate" style={{ color: "#3f51b5", fontWeight: "bold" }}> Expirition Date</label>
 
-                margin="dense"
-                id="date"
-                type="date"
-                fullWidth
-              />
+                    <Field name="date" type="date" className="form-control" />
+                    {errors.date && touched.date ? (
+                      <div style={{ color: "#f50057", fontWeight: "bold" }}>{errors.date}</div>
+                    ) : null}
+                  </Form>
+                )}
+              </Formik>
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleClose} color="primary">
+              <Button onClick={handleClose} style={{ fontWeight: "bold" }} color="primary">
                 Cancel
               </Button>
-              <Button onClick={handleClose} color="primary">
+              <Button onClick={handleClose} style={{ fontWeight: "bold" }} color="primary">
                 Add
               </Button>
             </DialogActions>
@@ -215,8 +245,7 @@ export default function PersistentDrawerLeft() {
         open={open}
         classes={{
           paper: classes.drawerPaper,
-        }}
-      >
+        }}>
         <div className={classes.drawerHeader}>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
@@ -226,10 +255,8 @@ export default function PersistentDrawerLeft() {
         <List>
           {['Category'].map((text, index) => (
             <>
-              <ListItem button key={text}>
+              <ListItem button >
                 <ListItemIcon>{index % 2 !== 0 ? <DeleteIcon /> : <ListIcon />}</ListItemIcon>
-
-
                 <ListItemText primary={text} />
               </ListItem>
               <ListItem button >
@@ -245,57 +272,47 @@ export default function PersistentDrawerLeft() {
           ))}
           {['Trash'].map((text, index) => (
             <>
-              <ListItem button key={text}>
+              <ListItem button >
                 <ListItemIcon>{index % 2 !== 0 ? <ListIcon /> : <DeleteIcon />}</ListItemIcon>
-
-
-
-
-
-
                 <ListItemText primary={text} />
               </ListItem>
 
             </>
           ))}
-
-
-
-
         </List>
-
       </Drawer>
       <main
         className={clsx(classes.content, {
           [classes.contentShift]: open,
-        })}
-      >
+        })}>
         <div className={classes.drawerHeader} />
-        <TableContainer component={Paper} style={{ boxShadow: "1px" }}>
+        <TableContainer component={Paper} style={{ boxShadow: "none" }}>
           <Table className={classes.table} aria-label="simple table" style={{ margin: "0 auto" }}>
             <TableHead>
               <TableRow>
-                <TableCell style={{fontWeight:"bold"}}>Company Name</TableCell>
-                <TableCell style={{fontWeight:"bold"}} align="right">Price</TableCell>
-                <TableCell style={{fontWeight:"bold"}} align="right">Expiration Date</TableCell>
+                <TableCell style={{ fontWeight: "bold" }}>Company Name</TableCell>
+                <TableCell style={{ fontWeight: "bold" }} align="right">Price</TableCell>
+                <TableCell style={{ fontWeight: "bold" }} align="right">Expiration Date</TableCell>
                 <TableCell align="right"></TableCell>
                 <TableCell align="right"></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {rows.map((row) => (
-                <TableRow key={row.name}>
+                <TableRow >
                   <TableCell component="th" scope="row">
-                    {row.name}
+                    {row.companyname}
                   </TableCell>
-                  <TableCell align="right">{row.calories}</TableCell>
-                  <TableCell align="right">{row.fat}</TableCell>
-                  <TableCell align="right" style={{padding:"1rem 0"}}><Button variant="contained" color="secondary">
+                  <TableCell align="right" >{row.price} $</TableCell>
+                  <TableCell align="right" >{row.edate}</TableCell>
+                  <TableCell align="right" style={{ padding: "0.5rem", width: 60 }}><Button variant="contained" onClick={handleClose} style={{ fontWeight: "bold" }} color="primary">
                     Edit
-                  </Button></TableCell>
-                  <TableCell align="right" style={{padding:"1rem 0 "}}><Button variant="contained" color="primary">
-                    Delete
-                  </Button></TableCell>
+                  </Button>
+                  </TableCell>
+                  <TableCell align="right" style={{ padding: "0.5rem", width: 150 }}><Button variant="contained" onClick={handleClose} style={{ fontWeight: "bold" }} color="secondary">
+                    Unsubscribe
+                  </Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
