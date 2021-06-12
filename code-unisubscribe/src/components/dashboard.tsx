@@ -41,7 +41,7 @@ import {
 } from "@material-ui/pickers";
 import "date-fns";
 import DateFnsUtils from "@date-io/date-fns";
-import LinearProgress from "@material-ui/core/LinearProgress";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 //import TextField from '@material-ui/core/TextField';
 import Dialog from "@material-ui/core/Dialog";
@@ -67,6 +67,9 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       display: "flex",
+      "& > * + *": {
+        marginLeft: theme.spacing(2),
+      },
     },
     table: {
       width: "1250",
@@ -177,7 +180,7 @@ export default function PersistentDrawerLeft() {
   const [open, setOpen] = React.useState(false);
   const [show, setShow] = React.useState(false);
 
-  const [pageNumber, setPageNumber] = React.useState<Number>(1);
+  const [pageNumber, setPageNumber] = React.useState<Number>(0);
   const [countOfData, setCountOfData] = React.useState<Number>(5);
 
   const [userId, setUserId] = React.useState<Number>(1);
@@ -209,7 +212,7 @@ export default function PersistentDrawerLeft() {
   };
 
   const handleClose = () => {
-    setShow(true);
+    setShow(false);
   };
 
   const handleSave = (selectedId: Number = 1) => {
@@ -238,13 +241,11 @@ export default function PersistentDrawerLeft() {
 
   const handleDecrease = () => {
     setPageNumber(Number(pageNumber) - 1);
-    alert(pageNumber);
     pageChangeHandle();
   };
 
   const handleIncrease = () => {
     setPageNumber(Number(pageNumber) + 1);
-    alert(pageNumber);
     pageChangeHandle();
   };
 
@@ -330,7 +331,6 @@ export default function PersistentDrawerLeft() {
                     >
                       Price
                     </label>
-
                     <Field name="price" className="form-control" />
                     {errors.price && touched.price ? (
                       <div style={{ color: "#f50057", fontWeight: "bold" }}>
@@ -343,7 +343,6 @@ export default function PersistentDrawerLeft() {
                     >
                       Link
                     </label>
-
                     <Field name="link" type="text" className="form-control" />
                     {errors.link && touched.link ? (
                       <div style={{ color: "#f50057", fontWeight: "bold" }}>
@@ -354,7 +353,6 @@ export default function PersistentDrawerLeft() {
                       htmlFor="expiritionDate"
                       style={{ color: "#3f51b5", fontWeight: "bold" }}
                     >
-                      {" "}
                       Expirition Date
                     </label>
 
@@ -442,6 +440,14 @@ export default function PersistentDrawerLeft() {
         className={clsx(classes.content, {
           [classes.contentShift]: open,
         })}
+        style={
+          {
+            // display: "flex",
+            // justifyContent: "center",
+            // alignItems: "center",
+            // height: "100vh",
+          }
+        }
       >
         <div className={classes.drawerHeader} />
         <TableContainer component={Paper} style={{ boxShadow: "none" }}>
@@ -465,10 +471,10 @@ export default function PersistentDrawerLeft() {
                 <TableCell align="right"></TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
-              {state ? (
-                state.filteredSubscriptions.map((item: any) => (
-                  <TableRow style={{}}>
+            {state ? (
+              state.filteredSubscriptions.map((item: any, index: any) => (
+                <TableBody key={index}>
+                  <TableRow>
                     {isEdit == true && selectedSubId === item.id ? (
                       <TableCell component="th" scope="row">
                         <TextField
@@ -479,7 +485,7 @@ export default function PersistentDrawerLeft() {
                       </TableCell>
                     ) : (
                       <TableCell component="th" scope="row">
-                        {item.companyName}
+                        {item.subscriptionName}
                       </TableCell>
                     )}
                     {isEdit == true && selectedSubId === item.id ? (
@@ -545,34 +551,73 @@ export default function PersistentDrawerLeft() {
                       </Button>
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <div
-                  style={{
-                    height: "50vh",
-                  }}
-                >
-                  <LinearProgress color="secondary" />
-                </div>
-              )}
-            </TableBody>
+                </TableBody>
+              ))
+            ) : (
+              <CircularProgress color="secondary" />
+            )}
           </Table>
         </TableContainer>
-        <div className={classes.root}>
-          <Button variant="contained" color="primary" onClick={handleDecrease}>
-            Back
-          </Button>
-          <Pagination
-            count={Math.ceil(state.subscriptions.length / 5)}
-            style={{ margin: "3rem auto 0 auto" }}
-            color="secondary"
-            page={Number(pageNumber)}
-            onChange={handleChange}
-          />
-          <Button variant="contained" color="primary" onClick={handleIncrease}>
-            Front
-          </Button>
-        </div>
+        {state.subscriptions.length > 0 && (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "2%",
+            }}
+          >
+            {/* <Button variant="contained" color="primary" onClick={handleDecrease}>
+              Back
+            </Button> */}
+            <nav aria-label="Page navigation example">
+              <ul className="pagination">
+                <li
+                  onClick={() => {
+                    handleDecrease();
+                  }}
+                  className="page-item"
+                >
+                  <a className="page-link" href="#" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span className="sr-only">Previous</span>
+                  </a>
+                </li>
+                {state &&
+                  [...Array(Math.ceil(state.subscriptions.length / 5) - 1)].map(
+                    (item, index) => (
+                      <li
+                        key={index}
+                        onClick={() => {
+                          setPageNumber(index);
+                          pageChangeHandle();
+                        }}
+                        className="page-item"
+                      >
+                        <a className="page-link" href="#">
+                          {index + 1}
+                        </a>
+                      </li>
+                    )
+                  )}
+
+                <li
+                  onClick={() => {
+                    if (state) handleIncrease();
+                  }}
+                  className="page-item"
+                >
+                  <a className="page-link" href="#" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span className="sr-only">Next</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+            {/* <Button variant="contained" color="primary" onClick={handleIncrease}>
+              Front
+            </Button> */}
+          </div>
+        )}
       </main>
     </div>
   );
