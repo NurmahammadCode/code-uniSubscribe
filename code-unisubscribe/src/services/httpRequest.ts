@@ -13,9 +13,7 @@ export class HttpClient {
   }
 
   async post(url: string, data: any) {
-    return await axios.post(`${this.baseUrl}/${url}`, {
-      subscription: data,
-    });
+    return await axios.post(`${this.baseUrl}/${url}`, data);
   }
 
   async delete(url: string) {

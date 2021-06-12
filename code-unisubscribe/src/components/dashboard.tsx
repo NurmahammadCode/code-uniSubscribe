@@ -25,6 +25,7 @@ import InboxIcon from "@material-ui/icons/MoveToInbox";
 import MailIcon from "@material-ui/icons/Mail";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ListIcon from "@material-ui/icons/List";
+import moment from "moment";
 
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -56,7 +57,7 @@ import Pagination from "@material-ui/lab/Pagination";
 
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
-import { getFilteredSubs, getSubscriptions } from "../store/actions";
+import { addSub, getFilteredSubs, getSubscriptions } from "../store/actions";
 import { useDispatch, useSelector } from "react-redux";
 import { useCallback } from "react";
 import { ISubscription } from "../models/types";
@@ -142,21 +143,9 @@ const rows = [
 ];
 
 const SignupSchema = Yup.object().shape({
-  companyname: Yup.string()
-    .min(2, "Too Short!")
-    .max(30, "Too Long!")
-    .required("Company Name is a required field!"),
-  price: Yup.string()
-    .matches(/^[+-]?\d*(?:[.,]\d*)?$/, "Should be a number")
-    .required("Price is a required field!"),
-  link: Yup.string()
-    .matches(
-      /((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/,
-      "Enter correct url!"
-    )
-    .required("Link is a required field!")
-    .min(10, "Too Short!")
-    .max(50, "Too Long!"),
+  companyname: Yup.string().required("Company Name is a required field!"),
+  price: Yup.string().required("Price is a required field!"),
+  link: Yup.string().required("Link is a required field!"),
   date: Yup.date()
     .min(new Date().toLocaleDateString())
     .required("Date is a required field!"),
@@ -188,6 +177,13 @@ export default function PersistentDrawerLeft() {
   const [selectedSubId, setSelectedSubId] = React.useState<any>(null);
   const [companyName, setCompanyName] = React.useState<any>(null);
 
+  const [addCompanyName, setAddCompanyName] = React.useState<String>();
+  const [addPrice, setAddPrice] = React.useState<String>();
+  const [addLink, setAddLink] = React.useState<String>();
+  const [addExpirationDate, setAddExpirationDate] = React.useState<Date>();
+  const [addNotifyDate, setAddNotifyDate] = React.useState<Number>(5);
+  const [addCategory, setAddCategory] = React.useState<String>("FILM");
+
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(
     new Date()
   );
@@ -212,12 +208,22 @@ export default function PersistentDrawerLeft() {
   };
 
   const handleClose = () => {
-    setShow(false);
+    // setShow(false);
   };
 
   const handleSave = (selectedId: Number = 1) => {
     setIsEdit(false);
     setSelectedSubId(null);
+  };
+
+  const handleAddSub = () => {
+    const newSubObject = {
+      companyName: addCompanyName,
+      price: addPrice,
+      link: addLink,
+      date: addExpirationDate?.toISOString().substring(0, 10),
+    };
+    addSub(newSubObject, userId)(dispatch);
   };
 
   const dispatch = useDispatch();
@@ -231,13 +237,13 @@ export default function PersistentDrawerLeft() {
     getFilteredSubs(userId, pageNumber, countOfData)(dispatch);
   }, [pageNumber, countOfData]);
 
-  const handleChange = useCallback(
-    (event: any, value: any) => {
-      setPageNumber(value);
-      pageChangeHandle();
-    },
-    [setPageNumber, pageChangeHandle]
-  );
+  // const handleChange = useCallback(
+  //   (event: any, value: any) => {
+  //     setPageNumber(value);
+  //     pageChangeHandle();
+  //   },
+  //   [setPageNumber, pageChangeHandle]
+  // );
 
   const handleDecrease = () => {
     setPageNumber(Number(pageNumber) - 1);
@@ -248,13 +254,6 @@ export default function PersistentDrawerLeft() {
     setPageNumber(Number(pageNumber) + 1);
     pageChangeHandle();
   };
-
-  // const renderListItems = useCallback(
-  //   () =>
-
-  //     )),
-  //   []
-  // );
 
   return (
     <div className={classes.root}>
@@ -304,15 +303,29 @@ export default function PersistentDrawerLeft() {
                   companyname: "",
                   price: "",
                   link: "",
-                  date: "",
+                  date: new Date(),
                 }}
                 validationSchema={SignupSchema}
                 onSubmit={(values) => {
-                  console.log(values);
+                  // setSubmitting(false);
+                  const newSubObject = {
+                    subscriptionName: values.companyname,
+                    price: Number(values.price),
+                    detail: null,
+                    notified: null,
+                    link: values.link,
+                    notifyDate: addNotifyDate,
+                    category: addCategory,
+                    expiredDate: moment(values.date)
+                      .toISOString()
+                      .substring(0, 10),
+                  };
+                  addSub(newSubObject, userId)(dispatch);
+                  getFilteredSubs(userId, pageNumber, countOfData)(dispatch);
                 }}
               >
-                {({ errors, touched }) => (
-                  <Form>
+                {({ errors, touched, handleSubmit }) => (
+                  <form>
                     <label
                       htmlFor="companyName"
                       style={{ color: "#3f51b5", fontWeight: "bold" }}
@@ -350,7 +363,7 @@ export default function PersistentDrawerLeft() {
                       </div>
                     ) : null}
                     <label
-                      htmlFor="expiritionDate"
+                      htmlFor="date"
                       style={{ color: "#3f51b5", fontWeight: "bold" }}
                     >
                       Expirition Date
@@ -362,26 +375,29 @@ export default function PersistentDrawerLeft() {
                         {errors.date}
                       </div>
                     ) : null}
-                  </Form>
+
+                    <Button
+                      onClick={handleClose}
+                      style={{ fontWeight: "bold" }}
+                      color="primary"
+                    >
+                      Cancel
+                    </Button>
+                    <button
+                      type="submit"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleSubmit();
+                      }}
+                      style={{ fontWeight: "bold" }}
+                      color="primary"
+                    >
+                      Add
+                    </button>
+                  </form>
                 )}
               </Formik>
             </DialogContent>
-            <DialogActions>
-              <Button
-                onClick={handleClose}
-                style={{ fontWeight: "bold" }}
-                color="primary"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleClose}
-                style={{ fontWeight: "bold" }}
-                color="primary"
-              >
-                Add
-              </Button>
-            </DialogActions>
           </Dialog>
         </Toolbar>
       </AppBar>
@@ -472,7 +488,7 @@ export default function PersistentDrawerLeft() {
               </TableRow>
             </TableHead>
             {state ? (
-              state.filteredSubscriptions.map((item: any, index: any) => (
+              state.subscriptions.map((item: any, index: any) => (
                 <TableBody key={index}>
                   <TableRow>
                     {isEdit == true && selectedSubId === item.id ? (

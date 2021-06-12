@@ -25,7 +25,7 @@ interface IActionGetFilteredSubs {
 //   payload:
 // }
 
-const request = new HttpClient("http://172.28.0.33:8080/api/clients/");
+const request = new HttpClient("http://172.28.0.33:8181/api/clients");
 
 export const getSubscriptions = (id: Number) => (dispatch: Dispatch) => {
   request
@@ -55,18 +55,18 @@ export const getFilteredSubs =
       .catch((err) => console.error(err));
   };
 
-export const addSub =
-  (payload: ISubscription, id: number) => (dispatch: Dispatch) => {
-    request
-      .post(`${id}/subscription`, payload)
-      .then((response) =>
-        dispatch({
-          type: ADD_SUBS,
-          payload: response,
-        })
-      )
-      .catch((err) => console.error(err));
-  };
+export const addSub = (payload: any, id: Number) => (dispatch: Dispatch) => {
+  request
+    .post(`${id}/subscription`, payload)
+    .then((response) => {
+      console.log("nurlunur", response.data);
+      dispatch({
+        type: ADD_SUBS,
+        payload: response.data,
+      });
+    })
+    .catch((err) => console.error(err));
+};
 
 export const deleteSub =
   (userId: Number, subId: Number) => (dispatch: Dispatch) => {

@@ -5,12 +5,10 @@ export enum Category {
 }
 
 export interface ISubscription {
-  _id?: Number;
-  CompanyName: String;
-  Price: String;
-  Detail: String;
-  ExpiryDate: Date;
-  NotifyDate: Number;
+  companyName: String;
+  price: String;
+  link: String;
+  date: Date;
 }
 
 export interface ISubArr {
