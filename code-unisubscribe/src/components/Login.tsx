@@ -15,8 +15,10 @@ import Container from "@material-ui/core/Container";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import axios from "axios";
 import { Modal } from "@material-ui/core";
+
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
+
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -58,18 +60,19 @@ export default function SignIn() {
   const [password, setPassword] = useState<String>("");
   const [isShowModal, setIsShowModal] = useState<any>(false);
   const [body, setBody] = useState<any>("Your username or password is false");
-  // const handleLogin = (e: any) => {
-  //   e.preventDefault();
-  //   console.log(userName, password);
-  //   axios
-  //     .post("http://172.28.0.33:8080/api/login", {
-  //       username: userName,
-  //       password: password,
-  //     })
-  //     .then((response) => {
-  //       console.log(response.data);
-  //     });
-  // };
+
+  const handleLogin = (e: any) => {
+    e.preventDefault();
+    axios
+      .post("http://localhost:8080/user/login", {
+        UserName: userName,
+        Password: password,
+      })
+      .then((response) => {
+        console.log(response);
+      });
+  };
+
   const SignupSchema = Yup.object().shape({
     password: Yup.string()
       .min(2, "Too Short!")
@@ -81,6 +84,7 @@ export default function SignIn() {
       .min(2, "Too Short!")
       .max(50, "Too Long!"),
   });
+
   return (
     <>
       <Modal
@@ -99,6 +103,7 @@ export default function SignIn() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
+
           <Formik
             initialValues={{
               email: "",
@@ -106,19 +111,8 @@ export default function SignIn() {
             }}
             validationSchema={SignupSchema}
             onSubmit={(values) => {
-              axios
-                .post("http://172.28.0.33:8080/api/login", {
-                  username: values.email,
-                  password: values.password,
-                })
-                .then((response) => {
-                  console.log(response.data);
-                  localStorage.setItem("token", response.data.token);
-                  history.push("/subscription");
-                })
-                .catch((error) => {
-                  alert("there is problem in login");
-                });
+              // same shape as initial values
+              console.log(values);
             }}
           >
             {({ errors, touched, handleSubmit }) => (
@@ -159,11 +153,11 @@ export default function SignIn() {
                     {errors.password}
                   </div>
                 ) : null}
+
                 <button
                   className="btn"
                   onClick={(e) => {
                     e.preventDefault();
-                    handleSubmit();
                   }}
                   color="primary"
                   style={{
