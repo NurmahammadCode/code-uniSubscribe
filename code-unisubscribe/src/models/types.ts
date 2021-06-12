@@ -15,11 +15,17 @@ export interface ISubscription {
 
 export interface ISubArr {
   subscriptions: ISubscription[];
+  filteredSubscriptions: ISubscription[];
 }
 
 export interface IDeleteSub {
   userId: Number;
   subId: Number;
+}
+
+export interface IFilterSubs {
+  pageNumber: Number;
+  countOfData: Number;
 }
 
 // export type ICardDispatch = (arg: ICard) => ICard;
