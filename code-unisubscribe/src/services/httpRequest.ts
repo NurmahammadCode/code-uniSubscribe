@@ -9,20 +9,38 @@ export class HttpClient {
   }
 
   async get(url: string) {
-    return await axios.get(`${this.baseUrl}/${url}`);
+    const token = localStorage.getItem("token");
+    return await axios.get(`${this.baseUrl}/${url}`, {
+      headers: {
+        Authorization: token,
+      },
+    });
   }
 
   async post(url: string, data: any) {
-    return await axios.post(`${this.baseUrl}/${url}`, data);
+    const token = localStorage.getItem("token");
+    return await axios.post(`${this.baseUrl}/${url}`, data, {
+      headers: {
+        Authorization: token,
+      },
+    });
   }
 
   async delete(url: string) {
-    return await axios.delete(`${this.baseUrl}/${url}`);
+    const token = localStorage.getItem("token");
+    return await axios.delete(`${this.baseUrl}/${url}`, {
+      headers: {
+        Authorization: token,
+      },
+    });
   }
 
   async edit(url: string, data: any) {
-    return await axios.put(`${this.baseUrl}/${url}`, {
-      subscription: data,
+    const token = localStorage.getItem("token");
+    return await axios.put(`${this.baseUrl}/${url}`, data, {
+      headers: {
+        Authorization: token,
+      },
     });
   }
 }
