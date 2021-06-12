@@ -321,7 +321,7 @@ export default function PersistentDrawerLeft() {
                       .substring(0, 10),
                   };
                   addSub(newSubObject, userId)(dispatch);
-                  getFilteredSubs(userId, pageNumber, countOfData)(dispatch);
+                  // getFilteredSubs(userId, pageNumber, countOfData)(dispatch);
                 }}
               >
                 {({ errors, touched, handleSubmit }) => (
