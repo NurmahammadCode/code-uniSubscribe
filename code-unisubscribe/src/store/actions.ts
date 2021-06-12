@@ -24,17 +24,17 @@ export const getSubscriptions = (id: Number) => (dispatch: Dispatch) => {
     .catch((err) => console.error(err));
 };
 
-// export const addSub = (payload: ISubscription,id:number) => (dispatch: Dispatch) => {
-//   request
-//     .post(`${id}/companies`, payload)
-//     .then((response) =>
-//       dispatch({
-//         type: ADD_SUBS,
-//         payload: response,
-//       })
-//     )
-//     .catch((err) => console.error(err));
-// };
+export const addSub = (payload: ISubscription[],id:number) => (dispatch: Dispatch) => {
+  request
+    .post(`${id}/companies`, payload)
+    .then((response) =>
+      dispatch({
+        type: ADD_SUBS,
+        payload: response,
+      })
+    )
+    .catch((err) => console.error(err));
+};
 
 export const deleteSub = (payload: IDeleteSub) => (dispatch: Dispatch) => {
   axios
