@@ -21,10 +21,13 @@ import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import MailIcon from "@material-ui/icons/Mail";
+import MovieIcon from '@material-ui/icons/Movie';
+import SportsEsportsIcon from '@material-ui/icons/SportsEsports';
+import SportsBasketballIcon from '@material-ui/icons/SportsBasketball';
 import DeleteIcon from "@material-ui/icons/Delete";
 import ListIcon from "@material-ui/icons/List";
+
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -60,6 +63,15 @@ import { getFilteredSubs, getSubscriptions } from "../store/actions";
 import { useDispatch, useSelector } from "react-redux";
 import { useCallback } from "react";
 import { ISubscription } from "../models/types";
+import AddIcon from '@material-ui/icons/Add';
+import ListSubheader from '@material-ui/core/ListSubheader';
+import Collapse from '@material-ui/core/Collapse';
+import ExpandLess from '@material-ui/icons/ExpandLess';
+import ExpandMore from '@material-ui/icons/ExpandMore';
+import StarBorder from '@material-ui/icons/StarBorder';
+
+
+import {deleteSub} from '../store/actions'
 
 const drawerWidth = 240;
 
@@ -73,6 +85,15 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     table: {
       width: "1250",
+    },
+    sidebarroot:{
+      width: '100%',
+      maxWidth: 360,
+      backgroundColor: theme.palette.background.paper,
+    },
+    sidebarnested:{
+      paddingLeft: theme.spacing(4),
+
     },
     appBar: {
       transition: theme.transitions.create(["margin", "width"], {
@@ -179,6 +200,8 @@ export default function PersistentDrawerLeft() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [show, setShow] = React.useState(false);
+  const [close, setClose] = React.useState(true);
+
 
   const [pageNumber, setPageNumber] = React.useState<Number>(0);
   const [countOfData, setCountOfData] = React.useState<Number>(5);
@@ -205,6 +228,9 @@ export default function PersistentDrawerLeft() {
   const handleClickOpen = () => {
     setShow(true);
   };
+  const handleClick = () => {
+    setClose(!close);
+  };
   const handleEdit = (selectedId: Number, name: String) => {
     setCompanyName(name);
     setIsEdit(true);
@@ -214,6 +240,8 @@ export default function PersistentDrawerLeft() {
   const handleClose = () => {
     setShow(false);
   };
+
+
 
   const handleSave = (selectedId: Number = 1) => {
     setIsEdit(false);
@@ -257,9 +285,9 @@ export default function PersistentDrawerLeft() {
   // );
 
   return (
-    <div className={classes.root}>
+    <div className={classes.root} >
       <CssBaseline />
-      <AppBar
+      <AppBar style={{marginTop:"0"}}
         position="fixed"
         className={clsx(classes.appBar, {
           [classes.appBarShift]: open,
@@ -282,7 +310,8 @@ export default function PersistentDrawerLeft() {
             style={{ fontWeight: "bold", marginLeft: "auto" }}
             color="secondary"
           >
-            Add New Subscription
+            Add New Subscription    <AddIcon />
+            
           </Button>
           <Dialog
             open={show}
@@ -390,11 +419,13 @@ export default function PersistentDrawerLeft() {
         variant="persistent"
         anchor="left"
         open={open}
+       
         classes={{
           paper: classes.drawerPaper,
         }}
       >
-        <div className={classes.drawerHeader}>
+
+        <div className={classes.drawerHeader} >
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "ltr" ? (
               <ChevronLeftIcon />
@@ -404,37 +435,60 @@ export default function PersistentDrawerLeft() {
           </IconButton>
         </div>
         <Divider />
-        <List>
-          {["Category"].map((text, index) => (
-            <>
-              <ListItem button>
-                <ListItemIcon>
-                  {index % 2 !== 0 ? <DeleteIcon /> : <ListIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItem>
-              <ListItem button>
-                <ListItemText primary={"Game"} />
-              </ListItem>
-              <ListItem button>
-                <ListItemText primary={"Sport "} />
-              </ListItem>
-              <ListItem button>
-                <ListItemText primary={"Movie"} />
-              </ListItem>
-            </>
-          ))}
-          {["Trash"].map((text, index) => (
-            <>
-              <ListItem button>
-                <ListItemIcon>
-                  {index % 2 !== 0 ? <ListIcon /> : <DeleteIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItem>
-            </>
-          ))}
+<img src="https://yorktonrentals.com/wp-content/uploads/2017/06/usericon.png"></img>
+<Typography variant="h5" style={{textAlign:"center",marginTop:"0.5rem",color:"#3f51b5"}}>John Doe</Typography>
+
+<List
+      component="nav"
+      aria-labelledby="nested-list-subheader"
+      
+      className={classes.sidebarroot}
+    >
+      
+    
+      <ListItem button onClick={handleClick}>
+        <ListItemIcon>
+          <ListIcon />
+        </ListItemIcon>
+        <ListItemText primary="Category" />
+        {close ? <ExpandLess style={{color:"#3f51b5"}}/> : <ExpandMore  style={{color:"#3f51b5"}}/>}
+      </ListItem>
+      <Collapse in={close} timeout="auto" unmountOnExit>
+        <List component="div" disablePadding>
+          <ListItem button className={classes.sidebarnested}>
+            <ListItemIcon>
+              <SportsEsportsIcon />
+            </ListItemIcon>
+            <ListItemText primary="Games" />
+          </ListItem>
+          <ListItem button className={classes.sidebarnested}>
+            <ListItemIcon>
+              <MovieIcon />
+            </ListItemIcon>
+            <ListItemText primary="Movies" />
+          </ListItem>
+          <ListItem button className={classes.sidebarnested}>
+            <ListItemIcon>
+              <SportsBasketballIcon />
+            </ListItemIcon>
+            <ListItemText primary="Sports" />
+          </ListItem>
         </List>
+      </Collapse>
+      <ListItem button>
+        <ListItemIcon>
+          <DeleteIcon />
+        </ListItemIcon>
+        <ListItemText primary="Trash" />
+      </ListItem>
+      <ListItem button>
+        <ListItemIcon>
+          <ExitToAppIcon />
+        </ListItemIcon>
+        <ListItemText primary="Log Out" />
+      </ListItem>
+    </List>
+
       </Drawer>
       <main
         className={clsx(classes.content, {
@@ -458,13 +512,13 @@ export default function PersistentDrawerLeft() {
           >
             <TableHead>
               <TableRow>
-                <TableCell style={{ fontWeight: "bold" }}>
+                <TableCell style={{ fontWeight: "bold",fontSize:"1.1rem" }}>
                   Company Name
                 </TableCell>
-                <TableCell style={{ fontWeight: "bold" }} align="right">
+                <TableCell style={{ fontWeight: "bold",fontSize:"1.1rem" }} align="right">
                   Price
                 </TableCell>
-                <TableCell style={{ fontWeight: "bold" }} align="right">
+                <TableCell style={{ fontWeight: "bold",fontSize:"1.1rem" }} align="right">
                   Expiration Date
                 </TableCell>
                 <TableCell align="right"></TableCell>
@@ -542,8 +596,10 @@ export default function PersistentDrawerLeft() {
                       style={{ padding: "0.5rem", width: 150 }}
                     >
                       <Button
+                         onClick={() => {
+                          deleteSub(userId,item.id)(dispatch); 
+                          setTimeout(()=>{getFilteredSubs(userId,pageNumber,countOfData)(dispatch)},0)}}
                         variant="contained"
-                        onClick={handleClose}
                         style={{ fontWeight: "bold" }}
                         color="secondary"
                       >
