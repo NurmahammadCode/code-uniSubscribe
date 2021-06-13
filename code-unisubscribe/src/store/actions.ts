@@ -60,7 +60,6 @@ export const addSub = (payload: any, id: Number) => (dispatch: Dispatch) => {
   request
     .post(`${id}/subscription`, payload)
     .then((response) => {
-      console.log("nurlunur", response.data);
       dispatch({
         type: ADD_SUBS,
         payload: response.data,
