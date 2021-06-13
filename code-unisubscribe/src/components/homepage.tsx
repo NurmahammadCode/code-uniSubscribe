@@ -61,33 +61,15 @@ export default function SignInSide() {
       <Grid item xs={false} sm={4} md={7} className={classes.image} />
       <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
         <div className={classes.paper}>
-        <Typography variant="h3" component="h3">
+        <Typography variant="h3" component="h3" style={{textAlign:"center",marginBottom:"2rem"}}>
   Welcome to Subscription App
 </Typography>
           <form className={classes.form} noValidate>
          
-     
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-              style={{marginTop:"5rem",padding:"1rem",fontWeight:"bold"}}
-            >
-              Login
-            </Button>
-             <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="secondary"
-              className={classes.submit}
-              style={{padding:"1rem",fontWeight:"bold"}}
+        <a href="/login" className="btn btn-primary btn-block">Login</a>
+        <a href="/registiration" className="btn btn-danger btn-block">Sign Up</a>
 
-            >
-              Sign Up
-            </Button>
+     
             
             <Box mt={5}>
               <Copyright />

@@ -64,21 +64,26 @@ import { addSub, getFilteredSubs, getSubscriptions } from "../store/actions";
 import { useDispatch, useSelector } from "react-redux";
 import { useCallback } from "react";
 import { ISubscription } from "../models/types";
-import AddIcon from '@material-ui/icons/Add';
+import AddCircleIcon from '@material-ui/icons/Add';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import Collapse from '@material-ui/core/Collapse';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import StarBorder from '@material-ui/icons/StarBorder';
 
+import MusicNoteIcon from '@material-ui/icons/MusicNote';
+import CodeIcon from '@material-ui/icons/Code';
+import DragHandleIcon from '@material-ui/icons/DragHandle';
 
-import {deleteSub} from '../store/actions'
+import { deleteSub } from '../store/actions'
 
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
+      width: 1200,
+      margin: "0 auto",
       display: "flex",
       "& > *": {
         marginTop: theme.spacing(2),
@@ -87,12 +92,12 @@ const useStyles = makeStyles((theme: Theme) =>
     table: {
       width: "1250",
     },
-    sidebarroot:{
+    sidebarroot: {
       width: '100%',
       maxWidth: 360,
       backgroundColor: theme.palette.background.paper,
     },
-    sidebarnested:{
+    sidebarnested: {
       paddingLeft: theme.spacing(4),
 
     },
@@ -164,12 +169,16 @@ const rows = [
 ];
 
 const SignupSchema = Yup.object().shape({
-  companyname: Yup.string().required("Company Name is a required field!"),
+  companyname: Yup.string().required("Company Name is a required field!").min(4, 'Too Short!')
+    .max(20, 'Too Long!'),
   price: Yup.string().required("Price is a required field!"),
-  link: Yup.string().required("Link is a required field!"),
+  link: Yup.string().required("Link is a required field!").min(4, 'Too Short!')
+    .max(20, 'Too Long!'),
   date: Yup.date()
     .min(new Date().toLocaleDateString())
     .required("Date is a required field!"),
+  category: Yup.string().required("Category is a required field!").min(4, 'Too Short!')
+    .max(20, 'Too Long!'),
 });
 
 const StyledTableRow = withStyles((theme: Theme) =>
@@ -203,9 +212,10 @@ export default function PersistentDrawerLeft() {
   const [addCompanyName, setAddCompanyName] = React.useState<String>();
   const [addPrice, setAddPrice] = React.useState<String>();
   const [addLink, setAddLink] = React.useState<String>();
+  const [addCategory, setAddCategory] = React.useState<String>();
+
   const [addExpirationDate, setAddExpirationDate] = React.useState<Date>();
   const [addNotifyDate, setAddNotifyDate] = React.useState<Number>(5);
-  const [addCategory, setAddCategory] = React.useState<String>("FILM");
 
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(
     new Date()
@@ -234,7 +244,7 @@ export default function PersistentDrawerLeft() {
   };
 
   const handleClose = () => {
-    // setShow(false);
+    setShow(false);
   };
 
 
@@ -250,6 +260,7 @@ export default function PersistentDrawerLeft() {
       price: addPrice,
       link: addLink,
       date: addExpirationDate?.toISOString().substring(0, 10),
+      category: addCategory,
     };
     addSub(newSubObject, userId)(dispatch);
   };
@@ -286,7 +297,7 @@ export default function PersistentDrawerLeft() {
   return (
     <div className={classes.root} >
       <CssBaseline />
-      <AppBar style={{marginTop:"0"}}
+      <AppBar style={{ marginTop: "0" }}
         position="fixed"
         className={clsx(classes.appBar, {
           [classes.appBarShift]: open,
@@ -309,8 +320,8 @@ export default function PersistentDrawerLeft() {
             style={{ fontWeight: "bold", marginLeft: "auto" }}
             color="secondary"
           >
-            Add New Subscription    <AddIcon />
-            
+            Add New Subscription    <AddCircleIcon />
+
           </Button>
           <Dialog
             open={show}
@@ -333,6 +344,7 @@ export default function PersistentDrawerLeft() {
                   price: "",
                   link: "",
                   date: new Date(),
+                  category: ""
                 }}
                 validationSchema={SignupSchema}
                 onSubmit={(values) => {
@@ -351,6 +363,7 @@ export default function PersistentDrawerLeft() {
                   };
                   addSub(newSubObject, userId)(dispatch);
                   getFilteredSubs(userId, pageNumber, countOfData)(dispatch);
+                  handleClose()
                 }}
               >
                 {({ errors, touched, handleSubmit }) => (
@@ -404,21 +417,28 @@ export default function PersistentDrawerLeft() {
                         {errors.date}
                       </div>
                     ) : null}
-
-                    <Button
-                      onClick={handleClose}
-                      style={{ fontWeight: "bold" }}
-                      color="primary"
+                    <label
+                      htmlFor="category"
+                      style={{ color: "#3f51b5", fontWeight: "bold" }}
                     >
-                      Cancel
-                    </Button>
+                      Category
+                    </label>
+                    <Field name="category" type="text" className="form-control" />
+                    {errors.category && touched.category ? (
+                      <div style={{ color: "#f50057", fontWeight: "bold" }}>
+                        {errors.category}
+                      </div>
+                    ) : null}
+                    <button className="btn" onClick={(e) => { e.preventDefault(); handleClose() }} color="primary" style={{ backgroundColor: "#f50057", color: "white", fontWeight: "bold", margin: "5px 3px" }}>Cancel</button>
                     <button
                       type="submit"
+                      className="btn"
                       onClick={(e) => {
                         e.preventDefault();
                         handleSubmit();
+
                       }}
-                      style={{ fontWeight: "bold" }}
+                      style={{ fontWeight: "bold", backgroundColor: "#3f51b5", color: "white", margin: "5px 3px" }}
                       color="primary"
                     >
                       Add
@@ -435,7 +455,7 @@ export default function PersistentDrawerLeft() {
         variant="persistent"
         anchor="left"
         open={open}
-       
+
         classes={{
           paper: classes.drawerPaper,
         }}
@@ -451,98 +471,113 @@ export default function PersistentDrawerLeft() {
           </IconButton>
         </div>
         <Divider />
-<img src="https://yorktonrentals.com/wp-content/uploads/2017/06/usericon.png"></img>
-<Typography variant="h5" style={{textAlign:"center",marginTop:"0.5rem",color:"#3f51b5"}}>John Doe</Typography>
+        <img src="https://yorktonrentals.com/wp-content/uploads/2017/06/usericon.png"></img>
+        <Typography variant="h5" style={{ textAlign: "center", marginTop: "0.2rem", color: "#3f51b5" }}>John Doe</Typography>
 
-<List
-      component="nav"
-      aria-labelledby="nested-list-subheader"
-      
-      className={classes.sidebarroot}
-    >
-      
-    
-      <ListItem button onClick={handleClick}>
-        <ListItemIcon>
-          <ListIcon />
-        </ListItemIcon>
-        <ListItemText primary="Category" />
-        {close ? <ExpandLess style={{color:"#3f51b5"}}/> : <ExpandMore  style={{color:"#3f51b5"}}/>}
-      </ListItem>
-      <Collapse in={close} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          <ListItem button className={classes.sidebarnested}>
+        <List
+          component="nav"
+          aria-labelledby="nested-list-subheader"
+
+          className={classes.sidebarroot}
+        >
+
+
+          <ListItem style={{ height: "40px" }} button onClick={handleClick}>
             <ListItemIcon>
-              <SportsEsportsIcon />
+              <ListIcon />
             </ListItemIcon>
-            <ListItemText primary="Games" />
+            <ListItemText primary="Category" />
+            {close ? <ExpandLess style={{ color: "#3f51b5" }} /> : <ExpandMore style={{ color: "#3f51b5" }} />}
           </ListItem>
-          <ListItem button className={classes.sidebarnested}>
+          <Collapse in={close} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItem style={{ height: "30px" }} button className={classes.sidebarnested}>
+                <ListItemIcon>
+                  <SportsEsportsIcon />
+                </ListItemIcon>
+                <ListItemText primary="Games" />
+              </ListItem>
+              <ListItem style={{ height: "30px" }} button className={classes.sidebarnested}>
+                <ListItemIcon>
+                  <MovieIcon />
+                </ListItemIcon>
+                <ListItemText primary="Movies" />
+              </ListItem>
+              <ListItem style={{ height: "30px" }} button className={classes.sidebarnested}>
+                <ListItemIcon>
+                  <SportsBasketballIcon />
+                </ListItemIcon>
+                <ListItemText primary="Sports" />
+              </ListItem>
+              <ListItem style={{ height: "30px" }} button className={classes.sidebarnested}>
+                <ListItemIcon>
+                  <MusicNoteIcon />
+                </ListItemIcon>
+                <ListItemText primary="Music" />
+              </ListItem>
+              <ListItem style={{ height: "30px" }} button className={classes.sidebarnested}>
+                <ListItemIcon>
+                  <CodeIcon />
+                </ListItemIcon>
+                <ListItemText primary="Development" />
+              </ListItem>
+              <ListItem style={{ height: "30px" }} button className={classes.sidebarnested}>
+                <ListItemIcon>
+                  <DragHandleIcon />
+                </ListItemIcon>
+                <ListItemText primary="Other" />
+              </ListItem>
+            </List>
+          </Collapse>
+          <ListItem style={{ height: "40px" }} button>
             <ListItemIcon>
-              <MovieIcon />
+              <DeleteIcon />
             </ListItemIcon>
-            <ListItemText primary="Movies" />
+            <ListItemText primary="Trash" />
           </ListItem>
-          <ListItem button className={classes.sidebarnested}>
+          <ListItem style={{ height: "40px" }} button>
             <ListItemIcon>
-              <SportsBasketballIcon />
+              <ExitToAppIcon />
             </ListItemIcon>
-            <ListItemText primary="Sports" />
+            <ListItemText primary="Log Out" />
           </ListItem>
         </List>
-      </Collapse>
-      <ListItem button>
-        <ListItemIcon>
-          <DeleteIcon />
-        </ListItemIcon>
-        <ListItemText primary="Trash" />
-      </ListItem>
-      <ListItem button>
-        <ListItemIcon>
-          <ExitToAppIcon />
-        </ListItemIcon>
-        <ListItemText primary="Log Out" />
-      </ListItem>
-    </List>
 
       </Drawer>
       <main
         className={clsx(classes.content, {
           [classes.contentShift]: open,
         })}
-        style={
-          {
-            // display: "flex",
-            // justifyContent: "center",
-            // alignItems: "center",
-            // height: "100vh",
-          }
-        }
+      
       >
         <div className={classes.drawerHeader} />
-        <TableContainer component={Paper} style={{ boxShadow: "none" }}>
+        <TableContainer component={Paper} style={{ boxShadow: "none", margin: "0 auto" }}>
           <Table
             className={classes.table}
             aria-label="simple table"
             style={{ margin: "0 auto" }}
+
           >
             <TableHead>
               <TableRow>
-                <TableCell style={{ fontWeight: "bold",fontSize:"1.1rem" }}>
+                <TableCell style={{ fontWeight: "bold", fontSize: "1.1rem" }}>
                   Company Name
                 </TableCell>
-                <TableCell style={{ fontWeight: "bold",fontSize:"1.1rem" }} align="right">
+                <TableCell style={{ fontWeight: "bold", fontSize: "1.1rem" }} align="right">
                   Price
                 </TableCell>
-                <TableCell style={{ fontWeight: "bold",fontSize:"1.1rem" }} align="right">
+                <TableCell style={{ fontWeight: "bold", fontSize: "1.1rem" }} align="right">
                   Expiration Date
+                </TableCell>
+                <TableCell style={{ fontWeight: "bold", fontSize: "1.1rem" }} align="right">
+                  Category
                 </TableCell>
                 <TableCell align="right"></TableCell>
                 <TableCell align="right"></TableCell>
               </TableRow>
             </TableHead>
             {state ? (
-              state.subscriptions.map((item: any, index: any) => (
+              state.filteredSubscriptions.map((item: any, index: any) => (
                 <TableBody key={index}>
                   <TableRow>
                     {isEdit == true && selectedSubId === item.id ? (
@@ -585,8 +620,15 @@ export default function PersistentDrawerLeft() {
                       </TableCell>
                     ) : (
                       <TableCell align="right">
-                        {item.notifyDate ? "12/09/29" : "12/09/29"}
+                        {item.expiredDate ? item.expiredDate : "12/09/29"}
                       </TableCell>
+                    )}
+                    {isEdit == true && selectedSubId === item.id ? (
+                      <TableCell align="right">
+                        <TextField id="standard-basic" label="Price" />
+                      </TableCell>
+                    ) : (
+                      <TableCell align="right">{item.category} </TableCell>
                     )}
                     <TableCell
                       align="right"
@@ -612,9 +654,10 @@ export default function PersistentDrawerLeft() {
                       style={{ padding: "0.5rem", width: 150 }}
                     >
                       <Button
-                         onClick={() => {
-                          deleteSub(userId,item.id)(dispatch); 
-                          setTimeout(()=>{getFilteredSubs(userId,pageNumber,countOfData)(dispatch)},0)}}
+                        onClick={() => {
+                          deleteSub(userId, item.id)(dispatch);
+                          setTimeout(() => { getFilteredSubs(userId, pageNumber, countOfData)(dispatch) }, 0)
+                        }}
                         variant="contained"
                         style={{ fontWeight: "bold" }}
                         color="secondary"
@@ -638,56 +681,39 @@ export default function PersistentDrawerLeft() {
               marginTop: "2%",
             }}
           >
-            {/* <Button variant="contained" color="primary" onClick={handleDecrease}>
-              Back
-            </Button> */}
-            <nav aria-label="Page navigation example">
+    
+            <nav className="pagination-outer mt-3" style={{ margin: "0 auto" }} aria-label="Page navigation">
               <ul className="pagination">
-                <li
-                  onClick={() => {
-                    handleDecrease();
-                  }}
-                  className="page-item"
-                >
-                  <a className="page-link" href="#" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                    <span className="sr-only">Previous</span>
+                <li onClick={() => {
+                  handleDecrease();
+                }} className="page-item">
+                  <a href="#" className="page-link" aria-label="Previous">
+                    <span aria-hidden="true">«</span>
                   </a>
                 </li>
+
                 {state &&
                   [...Array(Math.ceil(state.subscriptions.length / 5) - 1)].map(
                     (item, index) => (
-                      <li
-                        key={index}
+                      <li key={index}
                         onClick={() => {
                           setPageNumber(index);
                           pageChangeHandle();
-                        }}
-                        className="page-item"
-                      >
-                        <a className="page-link" href="#">
-                          {index + 1}
-                        </a>
-                      </li>
+                        }} className="page-item"> <a className="page-link" href="#">{index + 1}</a> </li>
+
+
                     )
                   )}
-
-                <li
-                  onClick={() => {
-                    if (state) handleIncrease();
-                  }}
-                  className="page-item"
-                >
-                  <a className="page-link" href="#" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                    <span className="sr-only">Next</span>
+                <li onClick={() => {
+                  if (state) handleIncrease();
+                }} className="page-item">
+                  <a href="#" className="page-link" aria-label="Next">
+                    <span aria-hidden="true">»</span>
                   </a>
                 </li>
               </ul>
             </nav>
-            {/* <Button variant="contained" color="primary" onClick={handleIncrease}>
-              Front
-            </Button> */}
+
           </div>
         )}
       </main>
