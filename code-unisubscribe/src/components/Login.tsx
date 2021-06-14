@@ -200,6 +200,7 @@ export default function SignIn() {
                   className="btn"
                   onClick={(e) => {
                     e.preventDefault();
+                    handleSubmit();
                   }}
                   color="primary"
                   style={{
