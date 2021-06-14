@@ -76,6 +76,7 @@ import CodeIcon from "@material-ui/icons/Code";
 import DragHandleIcon from "@material-ui/icons/DragHandle";
 
 import { deleteSub } from "../store/actions";
+import { useHistory } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -177,9 +178,9 @@ const SignupSchema = Yup.object().shape({
     .required("Link is a required field!")
     .min(4, "Too Short!")
     .max(20, "Too Long!"),
-  date: Yup.date()
-    .min(new Date().toLocaleDateString())
-    .required("Date is a required field!"),
+  // date: Yup.date()
+  //   .min(new Date().toLocaleDateString())
+  //   .required("Date is a required field!"),
   category: Yup.string()
     .required("Category is a required field!")
     .min(4, "Too Short!")
@@ -648,7 +649,6 @@ export default function PersistentDrawerLeft() {
                   Category
                 </TableCell>
                 <TableCell align="right"></TableCell>
-                <TableCell align="right"></TableCell>
               </TableRow>
             </TableHead>
             {state ? (
@@ -705,25 +705,6 @@ export default function PersistentDrawerLeft() {
                     ) : (
                       <TableCell align="right">{item.category} </TableCell>
                     )}
-                    <TableCell
-                      align="right"
-                      style={{ padding: "0.5rem", width: 60 }}
-                    >
-                      <Button
-                        variant="contained"
-                        onClick={() => {
-                          isEdit == true && selectedSubId === item.id
-                            ? handleSave()
-                            : handleEdit(item.id, item.companyName);
-                        }}
-                        style={{ fontWeight: "bold" }}
-                        color="primary"
-                      >
-                        {isEdit == true && selectedSubId === item.id
-                          ? "Save"
-                          : "Edit"}
-                      </Button>
-                    </TableCell>
                     <TableCell
                       align="right"
                       style={{ padding: "0.5rem", width: 150 }}
