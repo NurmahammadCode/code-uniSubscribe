@@ -36,7 +36,6 @@ function Copyright() {
     </Typography>
   );
 }
-
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(9),
@@ -89,45 +88,27 @@ const useStyles = makeStyles((theme) => ({
     }
   }
 }));
-
 export default function SignIn() {
   const classes = useStyles();
   const history = useHistory();
-
   const [userName, setUserName] = useState<String>("");
   const [password, setPassword] = useState<String>("");
-
-
-
   const [isShowModal, setIsShowModal] = useState<any>(false);
   const [body, setBody] = useState<any>("Your username or password is false");
 
   const [exit, setExit] = React.useState(false);
 
-  const handleLogin = (e: any) => {
 
-    e.preventDefault();
-    axios
-      .post("http://localhost:8080/user/login", {
-        UserName: userName,
-        Password: password,
-      })
-      .then((response) => {
-        console.log(response)
-      });
-
-
-  }
-
-  
   const SignupSchema = Yup.object().shape({
-   
     password: Yup.string()
-      .min(2, 'Too Short!')
-      .max(50, 'Too Long!')
-      .required('Required'),
-    email: Yup.string().email('Invalid email').required('Required').min(2, 'Too Short!')
-    .max(50, 'Too Long!'),
+      .min(2, "Too Short!")
+      .max(50, "Too Long!")
+      .required("Required"),
+    email: Yup.string()
+      .email("Invalid email")
+      .required("Required")
+      .min(2, "Too Short!")
+      .max(50, "Too Long!"),
   });
 
   return (
@@ -206,7 +187,5 @@ export default function SignIn() {
         </Box>
       </Container>
     </>
-  );
-}
-
-
+  )};
+                    

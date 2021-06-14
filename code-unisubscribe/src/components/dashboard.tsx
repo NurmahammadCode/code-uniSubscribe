@@ -21,14 +21,14 @@ import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import MovieIcon from '@material-ui/icons/Movie';
-import SportsEsportsIcon from '@material-ui/icons/SportsEsports';
-import SportsBasketballIcon from '@material-ui/icons/SportsBasketball';
+import MovieIcon from "@material-ui/icons/Movie";
+import SportsEsportsIcon from "@material-ui/icons/SportsEsports";
+import SportsBasketballIcon from "@material-ui/icons/SportsBasketball";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ListIcon from "@material-ui/icons/List";
 import moment from "moment";
-
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import {useHistory} from 'react-router-dom'
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -64,16 +64,16 @@ import { addSub, getFilteredSubs, getSubscriptions } from "../store/actions";
 import { useDispatch, useSelector } from "react-redux";
 import { useCallback } from "react";
 import { ISubscription } from "../models/types";
-import AddCircleIcon from '@material-ui/icons/Add';
-import ListSubheader from '@material-ui/core/ListSubheader';
-import Collapse from '@material-ui/core/Collapse';
-import ExpandLess from '@material-ui/icons/ExpandLess';
-import ExpandMore from '@material-ui/icons/ExpandMore';
-import StarBorder from '@material-ui/icons/StarBorder';
+import AddCircleIcon from "@material-ui/icons/Add";
+import ListSubheader from "@material-ui/core/ListSubheader";
+import Collapse from "@material-ui/core/Collapse";
+import ExpandLess from "@material-ui/icons/ExpandLess";
+import ExpandMore from "@material-ui/icons/ExpandMore";
+import StarBorder from "@material-ui/icons/StarBorder";
 
-import MusicNoteIcon from '@material-ui/icons/MusicNote';
-import CodeIcon from '@material-ui/icons/Code';
-import DragHandleIcon from '@material-ui/icons/DragHandle';
+import MusicNoteIcon from "@material-ui/icons/MusicNote";
+import CodeIcon from "@material-ui/icons/Code";
+import DragHandleIcon from "@material-ui/icons/DragHandle";
 
 import { deleteSub } from '../store/actions'
 import { Link } from 'react-router-dom'
@@ -98,13 +98,12 @@ const useStyles = makeStyles((theme: Theme) =>
       width: "1250",
     },
     sidebarroot: {
-      width: '100%',
+      width: "100%",
       maxWidth: 360,
       backgroundColor: theme.palette.background.paper,
     },
     sidebarnested: {
       paddingLeft: theme.spacing(4),
-
     },
     appBar: {
       transition: theme.transitions.create(["margin", "width"], {
@@ -194,16 +193,22 @@ function createData(companyname: string, price: number, edate: string) {
   return { companyname, price, edate };
 }
 const SignupSchema = Yup.object().shape({
-  companyname: Yup.string().required("Company Name is a required field!").min(4, 'Too Short!')
-    .max(20, 'Too Long!'),
+  companyname: Yup.string()
+    .required("Company Name is a required field!")
+    .min(4, "Too Short!")
+    .max(20, "Too Long!"),
   price: Yup.string().required("Price is a required field!"),
-  link: Yup.string().required("Link is a required field!").min(4, 'Too Short!')
-    .max(50, 'Too Long!'),
-  date: Yup.date()
-    .min(new Date().toLocaleDateString())
-    .required("Date is a required field!"),
-  category: Yup.string().required("Category is a required field!").min(4, 'Too Short!')
-    .max(20, 'Too Long!'),
+  link: Yup.string()
+    .required("Link is a required field!")
+    .min(4, "Too Short!")
+    .max(20, "Too Long!"),
+  // date: Yup.date()
+  //   .min(new Date().toLocaleDateString())
+  //   .required("Date is a required field!"),
+  category: Yup.string()
+    .required("Category is a required field!")
+    .min(4, "Too Short!")
+    .max(20, "Too Long!"),
 });
 
 const StyledTableRow = withStyles((theme: Theme) =>
@@ -217,6 +222,7 @@ const StyledTableRow = withStyles((theme: Theme) =>
 )(TableRow);
 
 export default function PersistentDrawerLeft() {
+  const history = useHistory();
   const state = useSelector((state: any) => state);
   console.log(state);
   const classes = useStyles();
@@ -226,7 +232,6 @@ export default function PersistentDrawerLeft() {
   const [display, setDisplay] = React.useState(false)
   const [close, setClose] = React.useState(true);
   const [exit, setExit] = React.useState(false);
-
 
 
   const [pageNumber, setPageNumber] = React.useState<Number>(0);
@@ -265,6 +270,9 @@ export default function PersistentDrawerLeft() {
   const handleListOpened = () => {
     setDisplay(true)
   }
+  const handleListClose = () => {
+    setDisplay(false)
+  }
   const handleClick = () => {
     setClose(!close);
   };
@@ -277,11 +285,6 @@ export default function PersistentDrawerLeft() {
   const handleClose = () => {
     setShow(false);
   };
-
-  const handleListClose = () => {
-    setDisplay(false);
-  };
-
 
   const handleSave = (selectedId: Number = 1) => {
     setIsEdit(false);
@@ -308,7 +311,7 @@ export default function PersistentDrawerLeft() {
 
   const pageChangeHandle = useCallback(() => {
     getFilteredSubs(userId, pageNumber, countOfData)(dispatch);
-  }, [pageNumber, countOfData]);
+  }, [pageNumber, countOfData, userId]);
 
   // const handleChange = useCallback(
   //   (event: any, value: any) => {
@@ -320,18 +323,23 @@ export default function PersistentDrawerLeft() {
 
   const handleDecrease = () => {
     setPageNumber(Number(pageNumber) - 1);
-    pageChangeHandle();
+    setTimeout(() => {
+      pageChangeHandle();
+    }, 300);
   };
 
   const handleIncrease = () => {
     setPageNumber(Number(pageNumber) + 1);
-    pageChangeHandle();
+    setTimeout(() => {
+      pageChangeHandle();
+    }, 300);
   };
 
   return (
-    <div className={classes.root} >
+    <div className={classes.root}>
       <CssBaseline />
-      <AppBar style={{ marginTop: "0" }}
+      <AppBar
+        style={{ marginTop: "0" }}
         position="fixed"
         className={clsx(classes.appBar, {
           [classes.appBarShift]: open,
@@ -417,8 +425,7 @@ export default function PersistentDrawerLeft() {
             style={{ fontWeight: "bold", marginLeft: "auto" }}
             color="secondary"
           >
-            Add New Subscription    <AddCircleIcon />
-
+            Add New Subscription <AddCircleIcon />
           </Button>
 
           <Dialog
@@ -442,7 +449,7 @@ export default function PersistentDrawerLeft() {
                   price: "",
                   link: "",
                   date: new Date(),
-                  category: ""
+                  category: "",
                 }}
                 validationSchema={SignupSchema}
                 onSubmit={(values) => {
@@ -460,8 +467,10 @@ export default function PersistentDrawerLeft() {
                       .substring(0, 10),
                   };
                   addSub(newSubObject, userId)(dispatch);
-                  getFilteredSubs(userId, pageNumber, countOfData)(dispatch);
-                  handleClose()
+                  setTimeout(() => {
+                    getFilteredSubs(userId, pageNumber, countOfData)(dispatch);
+                  }, 300);
+                  handleClose();
                 }}
               >
                 {({ errors, touched, handleSubmit }) => (
@@ -521,22 +530,45 @@ export default function PersistentDrawerLeft() {
                     >
                       Category
                     </label>
-                    <Field name="category" type="text" className="form-control" />
+                    <Field
+                      name="category"
+                      type="text"
+                      className="form-control"
+                    />
                     {errors.category && touched.category ? (
                       <div style={{ color: "#f50057", fontWeight: "bold" }}>
                         {errors.category}
                       </div>
                     ) : null}
-                    <button className="btn" onClick={(e) => { e.preventDefault(); handleClose() }} color="primary" style={{ backgroundColor: "#f50057", color: "white", fontWeight: "bold", margin: "5px 3px" }}>Cancel</button>
+                    <button
+                      className="btn"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleClose();
+                      }}
+                      color="primary"
+                      style={{
+                        backgroundColor: "#f50057",
+                        color: "white",
+                        fontWeight: "bold",
+                        margin: "5px 3px",
+                      }}
+                    >
+                      Cancel
+                    </button>
                     <button
                       type="submit"
                       className="btn"
                       onClick={(e) => {
                         e.preventDefault();
                         handleSubmit();
-
                       }}
-                      style={{ fontWeight: "bold", backgroundColor: "#3f51b5", color: "white", margin: "5px 3px" }}
+                      style={{
+                        fontWeight: "bold",
+                        backgroundColor: "#3f51b5",
+                        color: "white",
+                        margin: "5px 3px",
+                      }}
                       color="primary"
                     >
                       Add
@@ -553,13 +585,11 @@ export default function PersistentDrawerLeft() {
         variant="persistent"
         anchor="left"
         open={open}
-
         classes={{
           paper: classes.drawerPaper,
         }}
       >
-
-        <div className={classes.drawerHeader} >
+        <div className={classes.drawerHeader}>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "ltr" ? (
               <ChevronLeftIcon />
@@ -575,17 +605,18 @@ export default function PersistentDrawerLeft() {
         <List
           component="nav"
           aria-labelledby="nested-list-subheader"
-
           className={classes.sidebarroot}
         >
-
-
           <ListItem style={{ height: "40px" }} button onClick={handleClick}>
             <ListItemIcon>
               <ListIcon />
             </ListItemIcon>
             <ListItemText primary="Category" />
-            {close ? <ExpandLess style={{ color: "#3f51b5" }} /> : <ExpandMore style={{ color: "#3f51b5" }} />}
+            {close ? (
+              <ExpandLess style={{ color: "#3f51b5" }} />
+            ) : (
+              <ExpandMore style={{ color: "#3f51b5" }} />
+            )}
           </ListItem>
           <Collapse in={close} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
@@ -633,25 +664,30 @@ export default function PersistentDrawerLeft() {
             </ListItemIcon>
             <ListItemText primary="Trash" />
           </ListItem>
-          <ListItem style={{ height: "40px" }} button>
+          <ListItem button>
             <ListItemIcon>
               <ExitToAppIcon />
             </ListItemIcon>
-            <ListItemText>
-              <Link to="/login" style={{ color: "#3c3c3c", textDecoration: "none" }}>Log Out</Link>
-            </ListItemText>
+            <ListItemText
+              onClick={() => {
+                localStorage.setItem("token", "");
+                history.push("/");
+              }}
+              primary="Log Out"
+            />
           </ListItem>
         </List>
-
       </Drawer>
       <main
         className={clsx(classes.content, {
           [classes.contentShift]: open,
         })}
-
       >
         <div className={classes.drawerHeader} />
-        <TableContainer component={Paper} style={{ boxShadow: "none", margin: "0 auto" }}>
+        <TableContainer
+          component={Paper}
+          style={{ boxShadow: "none", margin: "0 auto" }}
+        >
           <Table
             className={`${classes.table} ${clsx(classes.animatedItem, {
               [classes.animatedItemExiting]: exit
@@ -659,23 +695,30 @@ export default function PersistentDrawerLeft() {
             
             aria-label="simple table"
             style={{ margin: "0 auto" }}
-
           >
             <TableHead>
               <TableRow>
                 <TableCell style={{ fontWeight: "bold", fontSize: "1.1rem" }}>
                   Company Name
                 </TableCell>
-                <TableCell style={{ fontWeight: "bold", fontSize: "1.1rem" }} align="right">
+                <TableCell
+                  style={{ fontWeight: "bold", fontSize: "1.1rem" }}
+                  align="right"
+                >
                   Price
                 </TableCell>
-                <TableCell style={{ fontWeight: "bold", fontSize: "1.1rem" }} align="right">
+                <TableCell
+                  style={{ fontWeight: "bold", fontSize: "1.1rem" }}
+                  align="right"
+                >
                   Expiration Date
                 </TableCell>
-                <TableCell style={{ fontWeight: "bold", fontSize: "1.1rem" }} align="right">
+                <TableCell
+                  style={{ fontWeight: "bold", fontSize: "1.1rem" }}
+                  align="right"
+                >
                   Category
                 </TableCell>
-                <TableCell align="right"></TableCell>
                 <TableCell align="right"></TableCell>
               </TableRow>
             </TableHead>
@@ -735,31 +778,18 @@ export default function PersistentDrawerLeft() {
                     )}
                     <TableCell
                       align="right"
-                      style={{ padding: "0.5rem", width: 60 }}
-                    >
-                      <Button
-                        variant="contained"
-                        onClick={() => {
-                          isEdit == true && selectedSubId === item.id
-                            ? handleSave()
-                            : handleEdit(item.id, item.companyName);
-                        }}
-                        style={{ fontWeight: "bold" }}
-                        color="primary"
-                      >
-                        {isEdit == true && selectedSubId === item.id
-                          ? "Save"
-                          : "Edit"}
-                      </Button>
-                    </TableCell>
-                    <TableCell
-                      align="right"
                       style={{ padding: "0.5rem", width: 150 }}
                     >
                       <Button
                         onClick={() => {
                           deleteSub(userId, item.id)(dispatch);
-                          setTimeout(() => { getFilteredSubs(userId, pageNumber, countOfData)(dispatch) }, 0)
+                          setTimeout(() => {
+                            getFilteredSubs(
+                              userId,
+                              pageNumber,
+                              countOfData
+                            )(dispatch);
+                          }, 300);
                         }}
                         variant="contained"
                         style={{ fontWeight: "bold" }}
@@ -787,9 +817,12 @@ export default function PersistentDrawerLeft() {
 
             <nav className="pagination-outer mt-3" style={{ margin: "0 auto" }} aria-label="Page navigation">
               <ul className="pagination">
-                <li onClick={() => {
-                  handleDecrease();
-                }} className="page-item">
+                <li
+                  onClick={() => {
+                    handleDecrease();
+                  }}
+                  className="page-item"
+                >
                   <a href="#" className="page-link" aria-label="Previous">
                     <span aria-hidden="true">«</span>
                   </a>
@@ -798,25 +831,33 @@ export default function PersistentDrawerLeft() {
                 {state &&
                   [...Array(Math.ceil(state.subscriptions.length / 5) - 1)].map(
                     (item, index) => (
-                      <li key={index}
+                      <li
+                        key={index}
                         onClick={() => {
                           setPageNumber(index);
                           pageChangeHandle();
-                        }} className="page-item"> <a className="page-link" href="#">{index + 1}</a> </li>
-
-
+                        }}
+                        className="page-item"
+                      >
+                        {" "}
+                        <a className="page-link" href="#">
+                          {index + 1}
+                        </a>{" "}
+                      </li>
                     )
                   )}
-                <li onClick={() => {
-                  if (state) handleIncrease();
-                }} className="page-item">
+                <li
+                  onClick={() => {
+                    if (state) handleIncrease();
+                  }}
+                  className="page-item"
+                >
                   <a href="#" className="page-link" aria-label="Next">
                     <span aria-hidden="true">»</span>
                   </a>
                 </li>
               </ul>
             </nav>
-
           </div>
         )}
       </main>

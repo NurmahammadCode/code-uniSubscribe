@@ -7,11 +7,7 @@ export const PrivateRoute: FunctionComponent<any> = ({
 }) => {
   const history = useHistory();
 
-  const accessToken = localStorage.getItem("isAuth");
-
-  if (accessToken != "true") {
-    history.push("/login");
-  }
+  const accessToken = localStorage.getItem("token");
 
   return (
     <Route
@@ -19,9 +15,8 @@ export const PrivateRoute: FunctionComponent<any> = ({
       render={(props) => {
         // logic for authenticated user to access /app part goes here.
         // e.g. check if user is logged-in logic.
-        const isLoggedIn = true;
 
-        return isLoggedIn ? (
+        return accessToken ? (
           <Component {...props} />
         ) : (
           <Redirect to={"/login"} />

@@ -8,36 +8,40 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx'
+import {Link as RouterT} from 'react-router-dom'
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
+      {"Copyright © "}
       <Link color="inherit" href="https://material-ui.com/">
       Notesub
       </Link>{' '}
       {new Date().getFullYear()}
-      {'.'}
+      {"."}
     </Typography>
   );
 }
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    height: '100vh',
+    height: "100vh",
   },
   image: {
-    backgroundImage: 'url(https://scrippers.neowebsolution.com/wp-content/uploads/2019/03/Subscriptions.jpg)',
-    backgroundRepeat: 'no-repeat',
+    backgroundImage:
+      "url(https://scrippers.neowebsolution.com/wp-content/uploads/2019/03/Subscriptions.jpg)",
+    backgroundRepeat: "no-repeat",
     backgroundColor:
-      theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
+      theme.palette.type === "light"
+        ? theme.palette.grey[50]
+        : theme.palette.grey[900],
+    backgroundSize: "cover",
+    backgroundPosition: "center",
   },
   paper: {
     margin: theme.spacing(8, 4),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
   },
   avatar: {
     margin: theme.spacing(1),
@@ -96,16 +100,21 @@ export default function SignInSide() {
           [classes.animatedItemExiting]: exit
         })}  item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
         <div className={classes.paper}>
-        <Typography variant="h3" component="h3" style={{textAlign:"center",marginBottom:"2rem"}}>
-  Welcome to Subscription App
-</Typography>
+          <Typography
+            variant="h3"
+            component="h3"
+            style={{ textAlign: "center", marginBottom: "2rem" }}
+          >
+            Welcome to Subscription App
+          </Typography>
           <form className={classes.form} noValidate>
-         
-        <a href="/login" className="btn btn-primary btn-block">Login</a>
-        <a href="/registiration" className="btn btn-danger btn-block">Sign Up</a>
+            <RouterT to="/login" className="btn btn-primary btn-block">
+              Login
+            </RouterT>
+            <RouterT to="/registiration" className="btn btn-primary btn-block">
+              Registiration
+            </RouterT>
 
-     
-            
             <Box mt={5}>
               <Copyright />
             </Box>
