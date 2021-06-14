@@ -25,7 +25,7 @@ interface IActionGetFilteredSubs {
 //   payload:
 // }
 
-const request = new HttpClient("http://915d31cade31.ngrok.io/api/clients");
+const request = new HttpClient("http://172.28.0.37:8080/api/clients");
 
 export const getSubscriptions = (id: Number) => (dispatch: Dispatch) => {
   request

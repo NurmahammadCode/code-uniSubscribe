@@ -80,20 +80,6 @@ export default function SignUp() {
 
   const handleRegister = (e: any) => {
     e.preventDefault();
-    if (firstName && lastName && email && phoneNumber && password)
-      axios
-        .post("http://915d31cade31.ngrok.io/api/register", {
-          name: firstName,
-          surname: lastName,
-          email: email,
-          phoneNumber: phoneNumber,
-          password: password,
-        })
-        .then((response) => {
-          console.log(response.data);
-          // history.push("/login");
-        })
-        .catch((error) => console.error(error));
   };
 
   const SignupSchema = Yup.object().shape({
@@ -139,17 +125,23 @@ export default function SignUp() {
               validationSchema={SignupSchema}
               onSubmit={(values) => {
                 // same shape as initial values
-                console.log(values);
+                axios
+                  .post("http://172.28.0.37:8080/api/register", {
+                    name: values.firstname,
+                    surname: values.lastname,
+                    email: values.email,
+                    phoneNumber: null,
+                    password: values.password,
+                  })
+                  .then((response) => {
+                    console.log(response.data);
+                    history.push("/login");
+                  })
+                  .catch((error) => console.error(error));
               }}
             >
-              {({ errors, touched }) => (
-                <form
-                  onSubmit={(e) => {
-                    handleRegister(e);
-                    history.push("/login");
-                  }}
-                  style={{ width: "25rem" }}
-                >
+              {({ errors, touched, handleSubmit }) => (
+                <form onSubmit={handleSubmit} style={{ width: "25rem" }}>
                   <label
                     htmlFor=""
                     style={{ color: "#3f51b5", fontWeight: "bold" }}
