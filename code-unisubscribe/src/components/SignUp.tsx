@@ -19,6 +19,7 @@ import Paper from "@material-ui/core/Paper";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 
+import clsx from "clsx";
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -66,6 +67,34 @@ const useStyles = makeStyles((theme) => ({
     backgroundSize: "cover",
     backgroundPosition: "center",
   },
+  animatedItem: {
+    animation: `$myEffect 2000ms ${theme.transitions.easing.easeInOut}`,
+  },
+  animatedItemExiting: {
+    animation: `$myEffectExit 2000ms ${theme.transitions.easing.easeInOut}`,
+    opacity: 0,
+    transform: "translateY(200%)",
+  },
+  "@keyframes myEffect": {
+    "0%": {
+      opacity: 0,
+      transform: "translateY(200%)",
+    },
+    "100%": {
+      opacity: 1,
+      transform: "translateY(0)",
+    },
+  },
+  "@keyframes myEffectExit": {
+    "0%": {
+      opacity: 1,
+      transform: "translateY(0)",
+    },
+    "100%": {
+      opacity: 0,
+      transform: "translateY(200%)",
+    },
+  },
 }));
 
 export default function SignUp() {
@@ -77,6 +106,8 @@ export default function SignUp() {
   const [email, setEmail] = useState<String>("");
   const [phoneNumber, setPhoneNumber] = useState<String>("");
   const [password, setPassword] = useState<String>("");
+  const [file, setFile] = useState<String>();
+  const [exit, setExit] = React.useState(false);
 
   const handleRegister = (e: any) => {
     e.preventDefault();
@@ -166,6 +197,7 @@ export default function SignUp() {
                       {errors.firstname}
                     </div>
                   ) : null}
+
                   <label
                     htmlFor="lastname"
                     style={{

@@ -27,7 +27,7 @@ import SportsBasketballIcon from "@material-ui/icons/SportsBasketball";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ListIcon from "@material-ui/icons/List";
 import moment from "moment";
-
+import {useHistory} from 'react-router-dom'
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 
 import Table from "@material-ui/core/Table";
@@ -75,8 +75,12 @@ import MusicNoteIcon from "@material-ui/icons/MusicNote";
 import CodeIcon from "@material-ui/icons/Code";
 import DragHandleIcon from "@material-ui/icons/DragHandle";
 
-import { deleteSub } from "../store/actions";
-import { useHistory } from "react-router-dom";
+import { deleteSub } from '../store/actions'
+import { Link } from 'react-router-dom'
+
+import Badge from '@material-ui/core/Badge';
+import MailIcon from '@material-ui/icons/Mail';
+
 
 const drawerWidth = 240;
 
@@ -144,6 +148,7 @@ const useStyles = makeStyles((theme: Theme) =>
       }),
       marginLeft: -drawerWidth,
     },
+    
     contentShift: {
       transition: theme.transitions.create("margin", {
         easing: theme.transitions.easing.easeOut,
@@ -151,23 +156,42 @@ const useStyles = makeStyles((theme: Theme) =>
       }),
       marginLeft: 0,
     },
+    animatedItem: {
+      animation: `$myEffect 1500ms ${theme.transitions.easing.easeInOut}`
+    },
+   
+    animatedItemExiting: {
+      animation: `$myEffectExit 2000ms ${theme.transitions.easing.easeInOut}`,
+      opacity: 0,
+      transform: "translateX(-200%)"
+    },
+  
+    "@keyframes myEffect": {
+      "0%": {
+        opacity: 0,
+        transform: "translateX(-200%)"
+      },
+      "100%": {
+        opacity: 1,
+        transform: "translateX(0)"
+      }
+    },
+    "@keyframes myEffectExit": {
+      "0%": {
+        opacity: 1,
+        transform: "translateX(0)"
+      },
+      "100%": {
+        opacity: 0,
+        transform: "translateX(-200%)"
+      }
+    }
   })
 );
 
 function createData(companyname: string, price: number, edate: string) {
   return { companyname, price, edate };
 }
-const rows = [
-  createData("Frozen yoghurt", 159, "15.05.2021"),
-  createData("Ice cream sandwich", 237, "10.04.2021"),
-  createData("Eclair", 262, "28.03.2021"),
-  createData("Cupcake", 305, "19.06.2021"),
-  createData("Gingerbread", 356, "18.04.2021"),
-  createData("Gingerbread", 356, "15.04.2021"),
-  createData("Gingerbread", 356, "27.05.2021"),
-  createData("Gingerbread", 356, "18.04.2021"),
-];
-
 const SignupSchema = Yup.object().shape({
   companyname: Yup.string()
     .required("Company Name is a required field!")
@@ -205,7 +229,10 @@ export default function PersistentDrawerLeft() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [show, setShow] = React.useState(false);
+  const [display, setDisplay] = React.useState(false)
   const [close, setClose] = React.useState(true);
+  const [exit, setExit] = React.useState(false);
+
 
   const [pageNumber, setPageNumber] = React.useState<Number>(0);
   const [countOfData, setCountOfData] = React.useState<Number>(5);
@@ -240,6 +267,12 @@ export default function PersistentDrawerLeft() {
   const handleClickOpen = () => {
     setShow(true);
   };
+  const handleListOpened = () => {
+    setDisplay(true)
+  }
+  const handleListClose = () => {
+    setDisplay(false)
+  }
   const handleClick = () => {
     setClose(!close);
   };
@@ -323,6 +356,69 @@ export default function PersistentDrawerLeft() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6">SUBSCRIPTION LIST</Typography>
+          <Badge onClick={handleListOpened}
+            style={{ marginLeft: "1rem", cursor: "pointer" }}
+            color="secondary" badgeContent={0} showZero>
+            <MailIcon />
+          </Badge>
+
+          <Dialog
+            open={display}
+            onClose={handleListClose}
+
+            aria-labelledby="form-dialog-title"
+          >
+            <DialogTitle
+              id="form-dialog-title"
+              style={{ color: "#f50057", fontWeight: "bolder", margin: "0 50px" }}
+            >
+              Subscriptions Notifications
+            </DialogTitle>
+            <DialogContent>
+
+              <Formik
+                initialValues={{
+                  companyname: "",
+                  price: "",
+                  link: "",
+                  date: new Date(),
+                  category: ""
+                }}
+                onSubmit={(values) => {
+                  // setSubmitting(false);
+                  const newSubObject = {
+                    subscriptionName: values.companyname,
+                    price: Number(values.price),
+                    detail: null,
+                    notified: null,
+                    link: values.link,
+                    notifyDate: addNotifyDate,
+                    category: values.category,
+                    expiredDate: moment(values.date)
+                      .toISOString()
+                      .substring(0, 10),
+                  };
+
+                }}
+              >
+                {({ errors, touched, handleSubmit }) => (
+                  <form>
+
+
+
+                    {state.filteredSubscriptions.map((item: any, index: any) => item.notifyDate == true ? <ul>
+                      <li>
+
+                      </li>
+                    </ul> : <ul></ul>)}
+
+                    <button className="btn" onClick={(e) => { e.preventDefault(); handleListClose() }} color="primary" style={{ backgroundColor: "#f50057", color: "white", fontWeight: "bold", margin: "5px 3px" }}>Close</button>
+
+                  </form>
+                )}
+              </Formik>
+            </DialogContent>
+          </Dialog>
           <Button
             variant="contained"
             onClick={handleClickOpen}
@@ -331,6 +427,7 @@ export default function PersistentDrawerLeft() {
           >
             Add New Subscription <AddCircleIcon />
           </Button>
+
           <Dialog
             open={show}
             onClose={handleClose}
@@ -364,7 +461,7 @@ export default function PersistentDrawerLeft() {
                     notified: null,
                     link: values.link,
                     notifyDate: addNotifyDate,
-                    category: addCategory,
+                    category: values.category,
                     expiredDate: moment(values.date)
                       .toISOString()
                       .substring(0, 10),
@@ -502,13 +599,8 @@ export default function PersistentDrawerLeft() {
           </IconButton>
         </div>
         <Divider />
-        <img src="https://yorktonrentals.com/wp-content/uploads/2017/06/usericon.png"></img>
-        <Typography
-          variant="h5"
-          style={{ textAlign: "center", marginTop: "0.2rem", color: "#3f51b5" }}
-        >
-          John Doe
-        </Typography>
+        <img src="https://code.edu.az/media/open-graph/Code-Academy-Logo-1.jpg" style={{width:"12rem",margin:"0 auto"}}></img>
+        <Typography variant="h5" style={{ textAlign: "center", marginTop: "0.2rem", color: "#3f51b5" }}>CA Student</Typography>
 
         <List
           component="nav"
@@ -528,61 +620,37 @@ export default function PersistentDrawerLeft() {
           </ListItem>
           <Collapse in={close} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
-              <ListItem
-                style={{ height: "30px" }}
-                button
-                className={classes.sidebarnested}
-              >
+              <ListItem style={{ height: "35px" }} button className={classes.sidebarnested}>
                 <ListItemIcon>
                   <SportsEsportsIcon />
                 </ListItemIcon>
                 <ListItemText primary="Games" />
               </ListItem>
-              <ListItem
-                style={{ height: "30px" }}
-                button
-                className={classes.sidebarnested}
-              >
+              <ListItem style={{ height: "35px" }} button className={classes.sidebarnested}>
                 <ListItemIcon>
                   <MovieIcon />
                 </ListItemIcon>
                 <ListItemText primary="Movies" />
               </ListItem>
-              <ListItem
-                style={{ height: "30px" }}
-                button
-                className={classes.sidebarnested}
-              >
+              <ListItem style={{ height: "35px" }} button className={classes.sidebarnested}>
                 <ListItemIcon>
                   <SportsBasketballIcon />
                 </ListItemIcon>
                 <ListItemText primary="Sports" />
               </ListItem>
-              <ListItem
-                style={{ height: "30px" }}
-                button
-                className={classes.sidebarnested}
-              >
+              <ListItem style={{ height: "35px" }} button className={classes.sidebarnested}>
                 <ListItemIcon>
                   <MusicNoteIcon />
                 </ListItemIcon>
                 <ListItemText primary="Music" />
               </ListItem>
-              <ListItem
-                style={{ height: "30px" }}
-                button
-                className={classes.sidebarnested}
-              >
+              <ListItem style={{ height: "35px" }} button className={classes.sidebarnested}>
                 <ListItemIcon>
                   <CodeIcon />
                 </ListItemIcon>
                 <ListItemText primary="Development" />
               </ListItem>
-              <ListItem
-                style={{ height: "30px" }}
-                button
-                className={classes.sidebarnested}
-              >
+              <ListItem style={{ height: "35px" }} button className={classes.sidebarnested}>
                 <ListItemIcon>
                   <DragHandleIcon />
                 </ListItemIcon>
@@ -621,7 +689,10 @@ export default function PersistentDrawerLeft() {
           style={{ boxShadow: "none", margin: "0 auto" }}
         >
           <Table
-            className={classes.table}
+            className={`${classes.table} ${clsx(classes.animatedItem, {
+              [classes.animatedItemExiting]: exit
+            })}`} 
+            
             aria-label="simple table"
             style={{ margin: "0 auto" }}
           >
@@ -743,11 +814,8 @@ export default function PersistentDrawerLeft() {
               marginTop: "2%",
             }}
           >
-            <nav
-              className="pagination-outer mt-3"
-              style={{ margin: "0 auto" }}
-              aria-label="Page navigation"
-            >
+
+            <nav className="pagination-outer mt-3" style={{ margin: "0 auto" }} aria-label="Page navigation">
               <ul className="pagination">
                 <li
                   onClick={() => {
