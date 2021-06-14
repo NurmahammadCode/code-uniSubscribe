@@ -14,12 +14,10 @@ import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import axios from "axios";
 import { Link as RouterLink, useHistory } from "react-router-dom";
-import Paper from '@material-ui/core/Paper';
+import Paper from "@material-ui/core/Paper";
 
-
-import { Formik, Form, Field } from 'formik';
-import * as Yup from 'yup';
-
+import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
 
 function Copyright() {
   return (
@@ -56,20 +54,18 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1, 0, 1),
   },
   root: {
-    height: '100vh',
+    height: "100vh",
   },
   image: {
-    backgroundImage: 'url(https://source.unsplash.com/random)',
-    backgroundRepeat: 'no-repeat',
+    backgroundImage: "url(https://source.unsplash.com/random)",
+    backgroundRepeat: "no-repeat",
     backgroundColor:
-      theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
+      theme.palette.type === "light"
+        ? theme.palette.grey[50]
+        : theme.palette.grey[900],
+    backgroundSize: "cover",
+    backgroundPosition: "center",
   },
- 
-  
-
- 
 }));
 
 export default function SignUp() {
@@ -86,7 +82,7 @@ export default function SignUp() {
     e.preventDefault();
     if (firstName && lastName && email && phoneNumber && password)
       axios
-        .post("http://172.28.0.33:8080/api/register", {
+        .post("http://915d31cade31.ngrok.io/api/register", {
           name: firstName,
           surname: lastName,
           email: email,
@@ -99,140 +95,191 @@ export default function SignUp() {
         })
         .catch((error) => console.error(error));
   };
-    
+
   const SignupSchema = Yup.object().shape({
     firstname: Yup.string()
-    .min(4, 'Too Short!')
-    .max(20, 'Too Long!')
-    .required('Required'),
+      .min(4, "Too Short!")
+      .max(20, "Too Long!")
+      .required("Required"),
     lastname: Yup.string()
-      .min(4, 'Too Short!')
-      .max(20, 'Too Long!')
-      .required('Required'),
+      .min(4, "Too Short!")
+      .max(20, "Too Long!")
+      .required("Required"),
     password: Yup.string()
-      .min(6, 'Too Short!')
-      .max(20, 'Too Long!')
-      .required('Required'),
-    email: Yup.string().email('Invalid email').required('Required').min(2, 'Too Short!')
-    .max(50, 'Too Long!'),
+      .min(6, "Too Short!")
+      .max(20, "Too Long!")
+      .required("Required"),
+    email: Yup.string()
+      .email("Invalid email")
+      .required("Required")
+      .min(2, "Too Short!")
+      .max(50, "Too Long!"),
   });
   return (
-
     <Grid container component="main" className={classes.root}>
-    <CssBaseline />
-    <Grid item xs={false} sm={4} md={7} className={classes.image} />
-    <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-     
-
-    <Container component="main" maxWidth="xs">
       <CssBaseline />
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Sign up
-        </Typography>
-        <Formik
-          
-          initialValues={{
-            firstname:"",
-            lastname:"",
-            email: "",
-            password: "",
-            
-          }}
-       validationSchema={SignupSchema}
-       onSubmit={values => {
-         // same shape as initial values
-         console.log(values);
-       }}
-     >
-       {({ errors, touched }) => (
-                  <form  onSubmit={(e) => {handleRegister(e);history.push("/login")}} style={{width:"25rem"}}>
-                     <label
-                      htmlFor=""
-                      style={{ color: "#3f51b5", fontWeight: "bold" }}
+      <Grid item xs={false} sm={4} md={7} className={classes.image} />
+      <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+        <Container component="main" maxWidth="xs">
+          <CssBaseline />
+          <div className={classes.paper}>
+            <Avatar className={classes.avatar}>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Sign up
+            </Typography>
+            <Formik
+              initialValues={{
+                firstname: "",
+                lastname: "",
+                email: "",
+                password: "",
+              }}
+              validationSchema={SignupSchema}
+              onSubmit={(values) => {
+                // same shape as initial values
+                console.log(values);
+              }}
+            >
+              {({ errors, touched }) => (
+                <form
+                  onSubmit={(e) => {
+                    handleRegister(e);
+                    history.push("/login");
+                  }}
+                  style={{ width: "25rem" }}
+                >
+                  <label
+                    htmlFor=""
+                    style={{ color: "#3f51b5", fontWeight: "bold" }}
+                  >
+                    Firstname
+                  </label>
+                  <Field
+                    name="firstname"
+                    type="text"
+                    placeholder="Firstname*"
+                    className="form-control"
+                    style={{ padding: "0.7rem", margin: "0.7rem 0" }}
+                  />
+                  {errors.firstname && touched.firstname ? (
+                    <div
+                      style={{
+                        color: "#f50057",
+                        fontSize: "1rem",
+                        fontWeight: "bold",
+                      }}
                     >
-                      Firstname
-                    </label>
-                    <Field name="firstname" type="text" placeholder="Firstname*" className="form-control" style={{padding:"0.7rem",margin:"0.7rem 0"}}/>
-                    {errors.firstname && touched.firstname ? (
-                      <div style={{ color: "#f50057", fontSize:"1rem", fontWeight: "bold" }}>
-                        {errors.firstname}
-                      </div>
-                    ) : null}
-                     <label
-                      htmlFor="lastname"
-                      style={{ color: "#3f51b5",fontSize:"1rem", fontWeight: "bold" }}
+                      {errors.firstname}
+                    </div>
+                  ) : null}
+                  <label
+                    htmlFor="lastname"
+                    style={{
+                      color: "#3f51b5",
+                      fontSize: "1rem",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Lastname
+                  </label>
+                  <Field
+                    name="lastname"
+                    type="text"
+                    placeholder="Lastname*"
+                    className="form-control"
+                    style={{ padding: "0.7rem", margin: "0.7rem 0" }}
+                  />
+                  {errors.lastname && touched.lastname ? (
+                    <div
+                      style={{
+                        color: "#f50057",
+                        fontSize: "1rem",
+                        fontWeight: "bold",
+                      }}
                     >
-                      Lastname
-                    </label>
-                    <Field name="lastname" type="text" placeholder="Lastname*" className="form-control" style={{padding:"0.7rem",margin:"0.7rem 0"}}/>
-                    {errors.lastname && touched.lastname ? (
-                      <div style={{ color: "#f50057",fontSize:"1rem", fontWeight: "bold" }}>
-                        {errors.email}
-                      </div>
-                    ) : null}
-                    <label
-                      htmlFor="email"
-                      style={{ color: "#3f51b5",fontSize:"1rem", fontWeight: "bold" }}
+                      {errors.email}
+                    </div>
+                  ) : null}
+                  <label
+                    htmlFor="email"
+                    style={{
+                      color: "#3f51b5",
+                      fontSize: "1rem",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Email
+                  </label>
+                  <Field
+                    name="email"
+                    type="email"
+                    placeholder="Email Address*"
+                    className="form-control"
+                    style={{ padding: "0.7rem", margin: "0.7rem 0" }}
+                  />
+                  {errors.email && touched.email ? (
+                    <div
+                      style={{
+                        color: "#f50057",
+                        fontSize: "1rem",
+                        fontWeight: "bold",
+                      }}
                     >
-                      Email
-                    </label>
-                    <Field name="email" type="email" placeholder="Email Address*" className="form-control" style={{padding:"0.7rem",margin:"0.7rem 0"}}/>
-                    {errors.email && touched.email ? (
-                      <div style={{ color: "#f50057",fontSize:"1rem", fontWeight: "bold" }}>
-                        {errors.email}
-                      </div>
-                    ) : null}
-                    <label
-                      htmlFor="price"
-                      style={{ color: "#3f51b5", fontWeight: "bold" }}
-                    >
-                      Password
-                    </label>
-                    <Field name="password" placeholder="Password*" type="password"  className="form-control" style={{padding:"0.7rem",margin:"0.7rem 0"}}/>
-                    {errors.password && touched.password ? (
-                      <div style={{ color: "#f50057", fontWeight: "bold" }}>
-                        {errors.password}
-                      </div>
-                    ) : null}
-               <FormControlLabel
-                control={<Checkbox value="allowExtraEmails" color="primary" />}
-                label="I want to receive inspiration, marketing promotions and updates via email."
-              />
+                      {errors.email}
+                    </div>
+                  ) : null}
+                  <label
+                    htmlFor="price"
+                    style={{ color: "#3f51b5", fontWeight: "bold" }}
+                  >
+                    Password
+                  </label>
+                  <Field
+                    name="password"
+                    placeholder="Password*"
+                    type="password"
+                    className="form-control"
+                    style={{ padding: "0.7rem", margin: "0.7rem 0" }}
+                  />
+                  {errors.password && touched.password ? (
+                    <div style={{ color: "#f50057", fontWeight: "bold" }}>
+                      {errors.password}
+                    </div>
+                  ) : null}
+                  <FormControlLabel
+                    control={
+                      <Checkbox value="allowExtraEmails" color="primary" />
+                    }
+                    label="I want to receive inspiration, marketing promotions and updates via email."
+                  />
 
-<Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="secondary"
-            className={classes.submit}
-          >
-            Sign Up
-          </Button>
-          <Grid container justify="flex-end">
-            <Grid item>
-              <Link href="/login" variant="body2">
-                Already have an account? Sign in
-              </Link>
-            </Grid>
-          </Grid>
-              
-                  </form>
-                )}
-              
-     </Formik>
-      </div>
-      <Box mt={4}>
-        <Copyright />
-      </Box>
-    </Container>
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    color="secondary"
+                    className={classes.submit}
+                  >
+                    Sign Up
+                  </Button>
+                  <Grid container justify="flex-end">
+                    <Grid item>
+                      <Link href="/login" variant="body2">
+                        Already have an account? Sign in
+                      </Link>
+                    </Grid>
+                  </Grid>
+                </form>
+              )}
+            </Formik>
+          </div>
+          <Box mt={4}>
+            <Copyright />
+          </Box>
+        </Container>
+      </Grid>
     </Grid>
-  </Grid>
-
-
-
   );
 }

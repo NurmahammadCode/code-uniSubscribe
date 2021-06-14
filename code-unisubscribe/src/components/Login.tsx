@@ -61,17 +61,17 @@ export default function SignIn() {
   const [isShowModal, setIsShowModal] = useState<any>(false);
   const [body, setBody] = useState<any>("Your username or password is false");
 
-  const handleLogin = (e: any) => {
-    e.preventDefault();
-    axios
-      .post("http://localhost:8080/user/login", {
-        UserName: userName,
-        Password: password,
-      })
-      .then((response) => {
-        console.log(response);
-      });
-  };
+  // const handleLogin = (e: any) => {
+  //   e.preventDefault();
+  //   axios
+  //     .post("http://localhost:8080/user/login", {
+  //       UserName: userName,
+  //       Password: password,
+  //     })
+  //     .then((response) => {
+  //       console.log(response);
+  //     });
+  // };
 
   const SignupSchema = Yup.object().shape({
     password: Yup.string()
@@ -111,8 +111,15 @@ export default function SignIn() {
             }}
             validationSchema={SignupSchema}
             onSubmit={(values) => {
-              // same shape as initial values
-              console.log(values);
+              axios
+                .post("http://915d31cade31.ngrok.io/api/login", {
+                  username: values.email,
+                  password: values.password,
+                })
+                .then((response) => {
+                  localStorage.setItem("token", response.data.token);
+                  history.push("/subscription");
+                });
             }}
           >
             {({ errors, touched, handleSubmit }) => (
@@ -158,6 +165,7 @@ export default function SignIn() {
                   className="btn"
                   onClick={(e) => {
                     e.preventDefault();
+                    handleSubmit();
                   }}
                   color="primary"
                   style={{
