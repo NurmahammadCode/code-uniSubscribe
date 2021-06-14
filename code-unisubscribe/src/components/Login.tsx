@@ -18,15 +18,16 @@ import { Modal } from "@material-ui/core";
 
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
-
+import clsx from 'clsx'
 
 function Copyright() {
   return (
-    <Typography variant="body2" color="textSecondary" align="center">
+    <Typography  variant="body2" color="textSecondary" align="center">
       {"Copyright © "}
       <Link
         color="inherit"
         href="https://www.facebook.com/nebiyev.nurmehemmed/"
+        
       >
         NoteSub
       </Link>{" "}
@@ -38,13 +39,14 @@ function Copyright() {
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    marginTop: theme.spacing(8),
+    marginTop: theme.spacing(9),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
   },
   avatar: {
     margin: theme.spacing(1),
+    marginTop:theme.spacing(5),
     backgroundColor: theme.palette.secondary.main,
   },
   form: {
@@ -54,6 +56,38 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  animatedItem: {
+    animation: `$myEffect 3000ms ${theme.transitions.easing.easeInOut}`
+  },
+  copyright: {
+    marginBottom: theme.spacing(3)
+  },
+  animatedItemExiting: {
+    animation: `$myEffectExit 3000ms ${theme.transitions.easing.easeInOut}`,
+    opacity: 0,
+    transform: "translateX(200%)"
+  },
+
+  "@keyframes myEffect": {
+    "0%": {
+      opacity: 0,
+      transform: "translateX(200%)"
+    },
+    "100%": {
+      opacity: 1,
+      transform: "translateX(0)"
+    }
+  },
+  "@keyframes myEffectExit": {
+    "0%": {
+      opacity: 1,
+      transform: "translateX(0)"
+    },
+    "100%": {
+      opacity: 0,
+      transform: "translateX(200%)"
+    }
+  }
 }));
 
 export default function SignIn() {
@@ -67,6 +101,8 @@ export default function SignIn() {
 
   const [isShowModal, setIsShowModal] = useState<any>(false);
   const [body, setBody] = useState<any>("Your username or password is false");
+
+  const [exit, setExit] = React.useState(false);
 
   const handleLogin = (e: any) => {
 
@@ -96,14 +132,16 @@ export default function SignIn() {
 
   return (
     <>
-      <Modal
+      <Modal 
         open={isShowModal}
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
       >
         <>{body}</>
       </Modal>
-      <Container component="main" maxWidth="xs">
+      <Container component="main" maxWidth="xs" className={clsx(classes.animatedItem, {
+          [classes.animatedItemExiting]: exit
+        })} style={{backgroundColor:"#f1f1f1",borderRadius:"5px",paddingBottom:"1rem"}}>
         <CssBaseline />
         <div className={classes.paper}>
           <Avatar className={classes.avatar}>
@@ -146,7 +184,7 @@ export default function SignIn() {
                     >
                       Password
                     </label>
-                    <Field name="password" placeholder="Password" type="password"  className="form-control" style={{padding:"0.7rem",margin:"1rem 0"}}/>
+                    <Field name="password" placeholder="Password" type="password"  className={`form-control`} style={{padding:"0.7rem",margin:"1rem 0"}}/>
                     {errors.password && touched.password ? (
                       <div style={{ color: "#f50057", fontWeight: "bold" }}>
                         {errors.password}
