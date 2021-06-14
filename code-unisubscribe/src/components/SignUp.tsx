@@ -20,7 +20,7 @@ import Paper from '@material-ui/core/Paper';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 
-
+import clsx from 'clsx'
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -66,7 +66,34 @@ const useStyles = makeStyles((theme) => ({
     backgroundSize: 'cover',
     backgroundPosition: 'center',
   },
- 
+  animatedItem: {
+    animation: `$myEffect 2000ms ${theme.transitions.easing.easeInOut}`
+  },
+  animatedItemExiting: {
+    animation: `$myEffectExit 2000ms ${theme.transitions.easing.easeInOut}`,
+    opacity: 0,
+    transform: "translateY(200%)"
+  },
+  "@keyframes myEffect": {
+    "0%": {
+      opacity: 0,
+      transform: "translateY(200%)"
+    },
+    "100%": {
+      opacity: 1,
+      transform: "translateY(0)"
+    }
+  },
+  "@keyframes myEffectExit": {
+    "0%": {
+      opacity: 1,
+      transform: "translateY(0)"
+    },
+    "100%": {
+      opacity: 0,
+      transform: "translateY(200%)"
+    }
+  }
   
 
  
@@ -81,6 +108,7 @@ export default function SignUp() {
   const [userName, setUserName] = useState<String>("");
   const [password, setPassword] = useState<String>("");
   const [file, setFile] = useState<String>();
+  const [exit, setExit] = React.useState(false);
 
   const handleRegister = (e: any) => {
     e.preventDefault();
@@ -119,7 +147,9 @@ export default function SignUp() {
     <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
      
 
-    <Container component="main" maxWidth="xs">
+    <Container component="main" maxWidth="xs"  className={clsx(classes.animatedItem, {
+          [classes.animatedItemExiting]: exit
+        })}>
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
